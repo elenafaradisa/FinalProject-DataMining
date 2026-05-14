@@ -4,6 +4,7 @@
 # Theme: Earthy Minimalist — Sage green + Warm tan, with Dark Mode toggle
 # =============================================================================
 
+import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -459,7 +460,10 @@ section[data-testid="stSidebar"] .stSlider span {{
 # ===========================================================================
 @st.cache_data
 def load_and_preprocess():
-    df     = pd.read_csv("cost-of-living.csv")
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, 'cost-of-living.csv')
+    df = pd.read_csv(file_path)
     x_cols = [c for c in df.columns if c.startswith("x")]
     df[x_cols] = df[x_cols].fillna(df[x_cols].median())
 
