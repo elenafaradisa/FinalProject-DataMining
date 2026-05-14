@@ -28,7 +28,7 @@ st.set_page_config(
     page_title            = "Cost of Living · Data Mining",
     page_icon             = "🌍",
     layout                = "wide",
-    initial_sidebar_state = "expanded"
+    initial_sidebar_state = "collapsed"
 )
 
 # ===========================================================================
@@ -110,21 +110,20 @@ html, body, .stApp {{
 }}
 
 /* ── Hide Streamlit chrome ── */
-#MainMenu, footer, header {{ visibility: hidden !important; }}
+#MainMenu, footer {{ visibility: hidden !important; }}
 [data-testid="stDecoration"] {{ display: none !important; }}
 .stDeployButton {{ display: none !important; }}
 div[data-testid="stToolbar"] {{ display: none !important; }}
 
 /* HAMBURGER SIDEBAR */
-[data-testid="collapsedControl"] {{
+[data-testid="collapsedControl"] {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 
-    background: {T['surface']} !important;
-    color: {T['text']} !important;
+    background: rgba(111,129,110,0.92) !important;
+    color: white !important;
 
-    border: 1px solid {T['border']} !important;
     border-radius: 10px !important;
 
     width: 38px !important;
@@ -133,19 +132,12 @@ div[data-testid="stToolbar"] {{ display: none !important; }}
     top: 14px !important;
     left: 14px !important;
 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-}}
-[data-testid="collapsedControl"]:hover {{
-    background: {T['card_bg']} !important;
-}}
+    z-index: 99999 !important;
+}
 
-[data-testid="collapsedControl"]:hover {{
-    background-color: rgba(147,107,67,0.9) !important;
-}}
-[data-testid="stDecoration"] {{ display: none !important; }}
-.stDeployButton {{ display: none !important; }}
-div[data-testid="stToolbar"] {{ display: none !important; }}
-
+[data-testid="collapsedControl"]:hover {
+    background: rgba(147,107,67,0.95) !important;
+}
 
 /* ── Block container ── */
 .block-container {{
