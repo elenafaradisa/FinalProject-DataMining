@@ -4,7 +4,6 @@
 # Theme: Earthy Minimalist — Sage green + Warm tan, with Dark Mode toggle
 # =============================================================================
 
-import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -110,20 +109,19 @@ html, body, .stApp {{
 }}
 
 /* ── Hide Streamlit chrome ── */
-#MainMenu, footer {{ visibility: hidden !important; }}
-[data-testid="stDecoration"] {{ display: none !important; }}
-.stDeployButton {{ display: none !important; }}
-div[data-testid="stToolbar"] {{ display: none !important; }}
-
+#MainMenu, footer {{
+    display: none !important;
+}}
 /* HAMBURGER SIDEBAR */
-[data-testid="collapsedControl"] {
+[data-testid="collapsedControl"] {{
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 
-    background: rgba(111,129,110,0.92) !important;
-    color: white !important;
+    background: {T['surface']} !important;
+    color: {T['text']} !important;
 
+    border: 1px solid {T['border']} !important;
     border-radius: 10px !important;
 
     width: 38px !important;
@@ -132,12 +130,19 @@ div[data-testid="stToolbar"] {{ display: none !important; }}
     top: 14px !important;
     left: 14px !important;
 
-    z-index: 99999 !important;
-}
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}}
 
-[data-testid="collapsedControl"]:hover {
-    background: rgba(147,107,67,0.95) !important;
-}
+[data-testid="collapsedControl"]:hover {{
+    background: {T['card_bg']} !important;
+}}
+
+[data-testid="collapsedControl"]:hover {{
+    background-color: rgba(147,107,67,0.9) !important;
+}}
+[data-testid="stDecoration"] {{ display: none !important; }}
+.stDeployButton {{ display: none !important; }}
+div[data-testid="stToolbar"] {{ display: none !important; }}
 
 /* ── Block container ── */
 .block-container {{
@@ -329,6 +334,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     border: 1px solid {T['border']} !important;
     overflow: hidden !important;
     box-shadow: 0 1px 5px rgba(0,0,0,0.05) !important;
+    background-color: {T['card_bg']} !important;
 }}
 [data-testid="stDataFrame"] th {{
     background-color: {T['surface2']} !important;
@@ -352,7 +358,19 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     background-color: {T['surface']} !important;
 }}
 [data-testid="stDataFrame"] tr:hover td {{
-    background-color: {T['primary']}14 !important;
+    background-color: {T['primary']}18 !important;
+}}
+/* Paksa semua div di dalam dataframe ikut background card */
+[data-testid="stDataFrame"] div {{
+    background-color: {T['card_bg']} !important;
+    color: {T['text']} !important;
+}}
+/* Fix inner wrapper yang sering jadi hitam */
+[data-testid="stDataFrameResizable"] {{
+    background-color: {T['card_bg']} !important;
+}}
+.dvn-scroller {{
+    background-color: {T['card_bg']} !important;
 }}
 
 /* ── Method pills ── */
@@ -374,19 +392,74 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
 ::-webkit-scrollbar-track {{ background:transparent; }}
 ::-webkit-scrollbar-thumb {{ background:{T['border']}; border-radius:3px; }}
 ::-webkit-scrollbar-thumb:hover {{ background:{T['muted']}; }}
+
+
+/* HILANGKAN TOP BAR HITAM */
+header {{
+    display: none !important;
+}}
+
+[data-testid="stToolbar"] {{
+    display: none !important;
+}}
+
+[data-testid="stDecoration"] {{
+    display: none !important;
+}}
+
+.block-container {{
+    padding-top: 1.5rem !important;
+}}
+
+
+/* FIX DARK MODE TOGGLE */
+
+/* track */
+[data-baseweb="toggle"] {{
+    background-color: #bdb7ae !important;
+}}
+
+/* active */
+[data-baseweb="toggle"][aria-checked="true"] {{
+    background-color: {T['primary']} !important;
+}}
+
+/* circle */
+[data-baseweb="toggle"] div {{
+    background-color: white !important;
+}}
+
+/* ── Fix slider tick min/max — hapus background stabilo ── */
+section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMin"],
+section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMax"] {{
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: {T['muted']} !important;
+    font-size: 10px !important;
+}}
+section[data-testid="stSidebar"] .stSlider [data-testid="stThumbValue"] {{
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: {T['text']} !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}}
+/* Hapus semua background pada span di dalam slider */
+section[data-testid="stSidebar"] .stSlider span {{
+    background: transparent !important;
+    box-shadow: none !important;
+}}
 </style>
 """, unsafe_allow_html=True)
-
 
 # ===========================================================================
 # LOAD & PREPROCESSING
 # ===========================================================================
 @st.cache_data
 def load_and_preprocess():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_dir, 'cost-of-living.csv')
-    df = pd.read_csv(file_path)
-    
+    df     = pd.read_csv("cost-of-living.csv")
     x_cols = [c for c in df.columns if c.startswith("x")]
     df[x_cols] = df[x_cols].fillna(df[x_cols].median())
 
@@ -489,14 +562,26 @@ def pl(fig, h=400):
         plot_bgcolor  = T["chart_pl"],
         font          = dict(color=T["text"], family="Sora, sans-serif", size=12),
         margin        = dict(t=30, b=36, l=10, r=10),
-        xaxis         = dict(gridcolor=T["border"], linecolor=T["border"],
-                             tickfont=dict(size=11, color=T["muted"]),
-                             title_font=dict(size=12, color=T["text"]), zeroline=False),
-        yaxis         = dict(gridcolor=T["border"], linecolor=T["border"],
-                             tickfont=dict(size=11, color=T["muted"]),
-                             title_font=dict(size=12, color=T["text"]), zeroline=False),
-        legend        = dict(bgcolor=T["card_bg"], bordercolor=T["border"], borderwidth=1,
-                             font=dict(size=11, color=T["text"]))
+        xaxis         = dict(
+            gridcolor  = T["border"],
+            linecolor  = T["border"],
+            tickfont   = dict(size=11, color=T["text"]),      # <-- ganti muted → text
+            title_font = dict(size=12, color=T["text"]),
+            zeroline   = False
+        ),
+        yaxis         = dict(
+            gridcolor  = T["border"],
+            linecolor  = T["border"],
+            tickfont   = dict(size=11, color=T["text"]),      # <-- ganti muted → text
+            title_font = dict(size=12, color=T["text"]),
+            zeroline   = False
+        ),
+        legend        = dict(
+            bgcolor     = T["card_bg"],
+            bordercolor = T["border"],
+            borderwidth = 1,
+            font        = dict(size=11, color=T["text"])
+        )
     )
     return fig
 
@@ -601,11 +686,53 @@ with tab1:
     )
     st.plotly_chart(fig_map, use_container_width=True, config={"displayModeBar":False})
 
-    st.markdown("<div class='section-title'>Tabel Data Lengkap (Country Level)</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Top 7 Negara — Recommendation Score Tertinggi</div>",
+                unsafe_allow_html=True)
     display_df         = country_data[["country","CLI","x54","Recommendation_Score"]].copy()
     display_df.columns = ["Country","CLI ($)","Avg Salary ($)","Rec. Score"]
-    display_df         = display_df.round(2).sort_values("Rec. Score",ascending=False).reset_index(drop=True)
-    st.dataframe(display_df, use_container_width=True, height=380)
+    display_df         = display_df.round(2).sort_values("Rec. Score", ascending=False).head(7).reset_index(drop=True)
+    st.dataframe(display_df, use_container_width=True, height=320)
+
+    # Keterangan variabel
+    st.markdown(f"""
+    <div style='display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;'>
+        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:10px;
+                    padding:10px 16px;flex:1;min-width:160px;'>
+            <div style='font-size:10px;font-weight:700;color:{T["muted"]};
+                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;'>
+                CLI ($)
+            </div>
+            <div style='font-size:12.5px;color:{T["text"]};line-height:1.5;'>
+                <b>Cost of Living Index</b> — indeks gabungan biaya hidup bulanan
+                (makan 35%, sewa 40%, utilitas 15%, bensin 10%).
+                Makin kecil = negara makin terjangkau.
+            </div>
+        </div>
+        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:10px;
+                    padding:10px 16px;flex:1;min-width:160px;'>
+            <div style='font-size:10px;font-weight:700;color:{T["muted"]};
+                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;'>
+                Avg Salary ($)
+            </div>
+            <div style='font-size:12.5px;color:{T["text"]};line-height:1.5;'>
+                <b>Rata-rata gaji bulanan bersih</b> — direpresentasikan oleh variabel x54.
+                Makin tinggi = potensi pendapatan lebih besar.
+            </div>
+        </div>
+        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:10px;
+                    padding:10px 16px;flex:1;min-width:160px;'>
+            <div style='font-size:10px;font-weight:700;color:{T["muted"]};
+                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;'>
+                Rec. Score
+            </div>
+            <div style='font-size:12.5px;color:{T["text"]};line-height:1.5;'>
+                <b>Recommendation Score</b> = Avg Salary ÷ CLI.
+                Mengukur seberapa "worth it" suatu negara —
+                makin tinggi = gaji besar relatif terhadap biaya hidup.
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ============================================================
@@ -641,8 +768,8 @@ with tab2:
                     annot_kws={"size":8.5,"color":T["text"]},
                     cbar_kws={"shrink":0.8})
         ax.tick_params(colors=T["text"], labelsize=9)
-        plt.xticks(rotation=45, ha="right", color=T["muted"], fontsize=9)
-        plt.yticks(color=T["muted"], fontsize=9)
+        plt.xticks(rotation=45, ha="right", color=T["text"], fontsize=9)
+        plt.yticks(color=T["text"], fontsize=9)
         plt.title("Correlation Matrix: Selected Features",
                   color=T["text"], pad=12, fontweight="bold", fontsize=11)
         fig_corr.tight_layout()
