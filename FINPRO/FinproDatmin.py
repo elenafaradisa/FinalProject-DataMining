@@ -83,7 +83,7 @@ with st.sidebar:
     </div>""", unsafe_allow_html=True)
 
     st.markdown("---")
-    dark_mode = st.toggle("🌙 Dark Mode", value=False)
+    dark_mode = st.toggle("Dark Mode", value=False)
     st.markdown("---")
 
     st.markdown("<span style='font-size:10px;font-weight:700;letter-spacing:0.12em;"
