@@ -115,6 +115,27 @@ html, body, .stApp {{
 .stDeployButton {{ display: none !important; }}
 div[data-testid="stToolbar"] {{ display: none !important; }}
 
+/* HAMBURGER SIDEBAR */
+[data-testid="collapsedControl"] {{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: {T['surface']} !important;
+    color: {T['text']} !important;
+
+    border: 1px solid {T['border']} !important;
+    border-radius: 10px !important;
+
+    width: 38px !important;
+    height: 38px !important;
+
+    top: 14px !important;
+    left: 14px !important;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}}
+
 /* ── Block container ── */
 .block-container {{
     padding: 1.5rem 2rem 2rem 2rem !important;
