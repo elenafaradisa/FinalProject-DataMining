@@ -135,6 +135,17 @@ div[data-testid="stToolbar"] {{ display: none !important; }}
 
     box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
 }}
+[data-testid="collapsedControl"]:hover {{
+    background: {T['card_bg']} !important;
+}}
+
+[data-testid="collapsedControl"]:hover {{
+    background-color: rgba(147,107,67,0.9) !important;
+}}
+[data-testid="stDecoration"] {{ display: none !important; }}
+.stDeployButton {{ display: none !important; }}
+div[data-testid="stToolbar"] {{ display: none !important; }}
+
 
 /* ── Block container ── */
 .block-container {{
