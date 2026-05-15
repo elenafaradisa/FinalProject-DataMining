@@ -426,6 +426,11 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     overflow: hidden !important;
     background-color: {T['card_bg']} !important;
 }}
+
+/* ── FIX: Sidebar collapse button — sembunyikan teks icon Material ── */
+[data-testid="stSidebarCollapseButton"] span {{
+    display: none !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
