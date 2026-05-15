@@ -1,4 +1,4 @@
-# =============================================================================
+=============================================================================
 # FinproDatmin.py — Hybrid Country Recommendation Dashboard (Streamlit)
 # Final Project Data Mining — Cost of Living Analysis
 # Theme: Earthy Minimalist — Sage green + Warm tan, with Dark Mode toggle
@@ -425,15 +425,6 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     border: 1px solid {T['border']} !important;
     overflow: hidden !important;
     background-color: {T['card_bg']} !important;
-}}
-
-/* ── FIX: Sidebar collapse button — sembunyikan teks icon Material ── */
-[data-testid="stSidebarCollapseButton"] button {{
-    font-size: 0 !important;
-    color: transparent !important;
-}}
-[data-testid="stSidebarCollapseButton"] button svg {{
-    display: inline-block !important;
 }}
 </style>
 """, unsafe_allow_html=True)
