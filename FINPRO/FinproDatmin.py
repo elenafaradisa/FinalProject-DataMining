@@ -127,29 +127,29 @@ footer {{ display: none !important; }}
 .stDeployButton {{ display: none !important; }}
 
 /* Hilangkan header Streamlit */
-header[data-testid="stHeader"] {
+header[data-testid="stHeader"] {{
     display: none !important;
-}
+}}
 
 /* Hilangkan tombol hamburger */
-[data-testid="collapsedControl"] {
+[data-testid="collapsedControl"] {{
     display: none !important;
-}
+}}
 
 /* Sidebar permanen */
-section[data-testid="stSidebar"] {
+section[data-testid="stSidebar"] {{
     display: block !important;
     visibility: visible !important;
     transform: translateX(0%) !important;
     width: 320px !important;
     min-width: 320px !important;
     position: relative !important;
-}
+}}
 
 /* Fix width internal sidebar */
-section[data-testid="stSidebar"] > div {
+section[data-testid="stSidebar"] > div {{
     width: 320px !important;
-}
+}}
 
 .block-container {{
     padding: 1.5rem 2rem 2rem 2rem !important;
