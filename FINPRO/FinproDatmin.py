@@ -1,4 +1,4 @@
-=============================================================================
+# =============================================================================
 # FinproDatmin.py — Hybrid Country Recommendation Dashboard (Streamlit)
 # Final Project Data Mining — Cost of Living Analysis
 # Theme: Earthy Minimalist — Sage green + Warm tan, with Dark Mode toggle
