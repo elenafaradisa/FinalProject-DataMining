@@ -147,7 +147,7 @@ section[data-testid="stSidebar"] {{
 .js-plotly-plot, .plot-container {{
     border-radius: 18px !important;
     overflow: hidden !important;
-}
+}}
 /* ── Sidebar ── */
 section[data-testid="stSidebar"] {{
     background-color: {T['surface']} !important;
@@ -425,6 +425,11 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     border: 1px solid {T['border']} !important;
     overflow: hidden !important;
     background-color: {T['card_bg']} !important;
+}}
+
+/* ── FIX: Sidebar collapse button — sembunyikan teks icon Material ── */
+[data-testid="stSidebarCollapseButton"] span {{
+    display: none !important;
 }}
 </style>
 """, unsafe_allow_html=True)
