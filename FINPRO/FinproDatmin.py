@@ -113,37 +113,44 @@ html, body, .stApp {{
 #MainMenu, footer {{
     display: none !important;
 }}
-/* HAMBURGER SIDEBAR */
+/* ── Sidebar toggle button — visible di Streamlit Cloud ── */
 [data-testid="collapsedControl"] {{
     display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     align-items: center !important;
     justify-content: center !important;
-
-    background: {T['surface']} !important;
+    background: {T['card_bg']} !important;
     color: {T['text']} !important;
-
-    border: 1px solid {T['border']} !important;
+    border: 1.5px solid {T['border']} !important;
     border-radius: 10px !important;
-
     width: 38px !important;
     height: 38px !important;
-
+    position: fixed !important;
     top: 14px !important;
     left: 14px !important;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    z-index: 999999 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important;
+    cursor: pointer !important;
 }}
-
 [data-testid="collapsedControl"]:hover {{
-    background: {T['card_bg']} !important;
+    background: {T['primary']} !important;
+    border-color: {T['primary']} !important;
+    color: #ffffff !important;
 }}
-
-[data-testid="collapsedControl"]:hover {{
-    background-color: rgba(147,107,67,0.9) !important;
+[data-testid="collapsedControl"] svg {{
+    fill: {T['text']} !important;
+    width: 18px !important;
+    height: 18px !important;
 }}
-[data-testid="stDecoration"] {{ display: none !important; }}
-.stDeployButton {{ display: none !important; }}
-div[data-testid="stToolbar"] {{ display: none !important; }}
+[data-testid="collapsedControl"]:hover svg {{
+    fill: #ffffff !important;
+}}
+/* Pastikan sidebar tidak tersembunyi */
+section[data-testid="stSidebar"] {{
+    display: block !important;
+    visibility: visible !important;
+}}
 
 /* ── Block container ── */
 .block-container {{
@@ -329,49 +336,74 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
 .page-title {{ font-size:20px; font-weight:700; color:{T['text']}; margin:0; font-family:'Sora',sans-serif; }}
 .page-sub   {{ font-size:12px; color:{T['muted']}; }}
 
-/* ── Dataframe: clean bg, dark-ish header, subtle zebra ── */
-[data-testid="stDataFrame"] > div {{
+/* ── Dataframe: full theme-aware contrast ── */
+[data-testid="stDataFrame"] > div,
+[data-testid="stDataFrame"] > div > div,
+[data-testid="stDataFrameResizable"] {{
     border-radius: 14px !important;
     border: 1px solid {T['border']} !important;
     overflow: hidden !important;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.05) !important;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.06) !important;
     background-color: {T['card_bg']} !important;
 }}
-[data-testid="stDataFrame"] th {{
+
+/* Header */
+[data-testid="stDataFrame"] th,
+[data-testid="stDataFrame"] th * {{
     background-color: {T['surface2']} !important;
-    color: {T['muted']} !important;
+    color: {T['text']} !important;
     font-size: 10.5px !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.08em !important;
-    border-bottom: 2px solid {T['primary']}55 !important;
+    border-bottom: 2px solid {T['primary']}66 !important;
     padding: 10px 14px !important;
     font-family: 'Sora', sans-serif !important;
+    opacity: 1 !important;
 }}
-[data-testid="stDataFrame"] td {{
+
+/* Cells */
+[data-testid="stDataFrame"] td,
+[data-testid="stDataFrame"] td * {{
     font-size: 13px !important;
     color: {T['text']} !important;
     background-color: {T['card_bg']} !important;
     border-bottom: 1px solid {T['border']} !important;
     padding: 9px 14px !important;
+    opacity: 1 !important;
 }}
-[data-testid="stDataFrame"] tr:nth-child(even) td {{
+
+/* Zebra stripe */
+[data-testid="stDataFrame"] tr:nth-child(even) td,
+[data-testid="stDataFrame"] tr:nth-child(even) td * {{
     background-color: {T['surface']} !important;
 }}
-[data-testid="stDataFrame"] tr:hover td {{
+
+/* Hover */
+[data-testid="stDataFrame"] tr:hover td,
+[data-testid="stDataFrame"] tr:hover td * {{
     background-color: {T['primary']}18 !important;
 }}
-/* Paksa semua div di dalam dataframe ikut background card */
-[data-testid="stDataFrame"] div {{
+
+/* Semua div dalam dataframe ikut tema */
+[data-testid="stDataFrame"] div,
+[data-testid="stDataFrame"] div * {{
     background-color: {T['card_bg']} !important;
     color: {T['text']} !important;
 }}
-/* Fix inner wrapper yang sering jadi hitam */
-[data-testid="stDataFrameResizable"] {{
+
+/* Scroller */
+.dvn-scroller,
+.dvn-scroller * {{
     background-color: {T['card_bg']} !important;
 }}
-.dvn-scroller {{
-    background-color: {T['card_bg']} !important;
+
+/* Canvas text (Streamlit dataframe pakai canvas) */
+[data-testid="stDataFrame"] canvas {{
+    filter: {
+        "none" if not dark_mode
+        else "invert(0)"
+    } !important;
 }}
 
 /* ── Method pills ── */
@@ -559,33 +591,49 @@ def hybrid_recommend(ref, budget, salary, n):
     return res[["country","Similarity (%)","CLI ($)","Avg Salary ($)","Rec. Score"]]
 
 def pl(fig, h=400):
-    """Unified Plotly layout using current theme T."""
+    """Unified Plotly layout — axis labels hitam pekat, theme-aware."""
+    axis_color  = T["text"]     # 100% opaque, bukan muted
+    title_color = T["text"]
+
     fig.update_layout(
         height        = h,
         paper_bgcolor = T["card_bg"],
         plot_bgcolor  = T["chart_pl"],
         font          = dict(color=T["text"], family="Sora, sans-serif", size=12),
         margin        = dict(t=30, b=36, l=10, r=10),
-        xaxis         = dict(
-            gridcolor  = T["border"],
-            linecolor  = T["border"],
-            tickfont   = dict(size=11, color=T["text"]),      # <-- ganti muted → text
-            title_font = dict(size=12, color=T["text"]),
-            zeroline   = False
+        xaxis = dict(
+            gridcolor   = T["border"],
+            linecolor   = T["border"],
+            tickfont    = dict(size=11, color=axis_color, family="Sora, sans-serif"),
+            title_font  = dict(size=12, color=title_color, family="Sora, sans-serif"),
+            zeroline    = False,
+            showline    = True,
+            linewidth   = 1,
         ),
-        yaxis         = dict(
-            gridcolor  = T["border"],
-            linecolor  = T["border"],
-            tickfont   = dict(size=11, color=T["text"]),      # <-- ganti muted → text
-            title_font = dict(size=12, color=T["text"]),
-            zeroline   = False
+        yaxis = dict(
+            gridcolor   = T["border"],
+            linecolor   = T["border"],
+            tickfont    = dict(size=11, color=axis_color, family="Sora, sans-serif"),
+            title_font  = dict(size=12, color=title_color, family="Sora, sans-serif"),
+            zeroline    = False,
+            showline    = True,
+            linewidth   = 1,
         ),
-        legend        = dict(
+        legend = dict(
             bgcolor     = T["card_bg"],
             bordercolor = T["border"],
             borderwidth = 1,
             font        = dict(size=11, color=T["text"])
         )
+    )
+    # Paksa semua axis yang mungkin sudah di-set sebelumnya
+    fig.update_xaxes(
+        tickfont   = dict(color=axis_color, size=11, family="Sora, sans-serif"),
+        title_font = dict(color=title_color, size=12, family="Sora, sans-serif"),
+    )
+    fig.update_yaxes(
+        tickfont   = dict(color=axis_color, size=11, family="Sora, sans-serif"),
+        title_font = dict(color=title_color, size=12, family="Sora, sans-serif"),
     )
     return fig
 
@@ -771,11 +819,24 @@ with tab2:
                     linewidths=0.4, linecolor=T["border"],
                     annot_kws={"size":8.5,"color":T["text"]},
                     cbar_kws={"shrink":0.8})
-        ax.tick_params(colors=T["text"], labelsize=9)
+        ax.tick_params(colors=T["text"], labelsize=9, which="both")
+        ax.xaxis.label.set_color(T["text"])
+        ax.yaxis.label.set_color(T["text"])
+        for label in ax.get_xticklabels():
+            label.set_color(T["text"])
+            label.set_alpha(1.0)
+        for label in ax.get_yticklabels():
+            label.set_color(T["text"])
+            label.set_alpha(1.0)
         plt.xticks(rotation=45, ha="right", color=T["text"], fontsize=9)
         plt.yticks(color=T["text"], fontsize=9)
         plt.title("Correlation Matrix: Selected Features",
                   color=T["text"], pad=12, fontweight="bold", fontsize=11)
+        # Fix colorbar tick labels
+        cbar = ax.collections[0].colorbar
+        if cbar:
+            cbar.ax.tick_params(colors=T["text"], labelsize=8)
+            plt.setp(cbar.ax.yaxis.get_ticklabels(), color=T["text"], alpha=1.0)
         fig_corr.tight_layout()
         st.pyplot(fig_corr)
 
