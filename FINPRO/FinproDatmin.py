@@ -126,37 +126,28 @@ footer {{ display: none !important; }}
 [data-testid="stToolbar"] {{ display: none !important; }}
 .stDeployButton {{ display: none !important; }}
 
-/* Hilangkan header Streamlit */
 header[data-testid="stHeader"] {{
-    display: none !important;
+    background: transparent !important;
 }}
 
-/* Hilangkan tombol hamburger */
-[data-testid="collapsedControl"] {{
-    display: none !important;
-}}
-
-/* Sidebar permanen */
+/* Sidebar */
 section[data-testid="stSidebar"] {{
-    display: block !important;
-    visibility: visible !important;
-    transform: translateX(0%) !important;
-    width: 320px !important;
-    min-width: 320px !important;
-    position: relative !important;
-}}
-
-/* Fix width internal sidebar */
-section[data-testid="stSidebar"] > div {{
-    width: 320px !important;
+    background-color: {T['surface']} !important;
+    border-right: 1px solid {T['border']} !important;
 }}
 
 .block-container {{
-    padding: 1.5rem 2rem 2rem 2rem !important;
-    max-width: 100% !important;
-    background-color: {T['app_bg']} !important;
+    padding-top: 2rem !important;
+    padding-bottom: 3rem !important;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    max-width: 1450px !important;
 }}
 
+.js-plotly-plot, .plot-container {{
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}
 /* ── Sidebar ── */
 section[data-testid="stSidebar"] {{
     background-color: {T['surface']} !important;
