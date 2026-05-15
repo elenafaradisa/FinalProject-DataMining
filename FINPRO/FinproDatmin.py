@@ -428,8 +428,12 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
 }}
 
 /* ── FIX: Sidebar collapse button — sembunyikan teks icon Material ── */
-[data-testid="stSidebarCollapseButton"] span {{
-    display: none !important;
+[data-testid="stSidebarCollapseButton"] button {{
+    font-size: 0 !important;
+    color: transparent !important;
+}}
+[data-testid="stSidebarCollapseButton"] button svg {{
+    display: inline-block !important;
 }}
 </style>
 """, unsafe_allow_html=True)
