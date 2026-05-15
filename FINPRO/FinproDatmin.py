@@ -28,7 +28,7 @@ st.set_page_config(
     page_title            = "Cost of Living · Data Mining",
     page_icon             = "🌍",
     layout                = "wide",
-    initial_sidebar_state = "expanded"
+    initial_sidebar_state = "expanded"   # FIX: selalu expanded
 )
 
 # ===========================================================================
@@ -48,6 +48,12 @@ LIGHT = {
     "border"   : "#e0dbd4",
     "pink_lt"  : "#f4f0ea",
     "chart_pl" : "#faf9f7",
+    # tabel HTML
+    "tbl_hdr"  : "#ece9e3",
+    "tbl_row"  : "#ffffff",
+    "tbl_alt"  : "#f4f2ef",
+    "tbl_txt"  : "#0e1011",
+    "tbl_muted": "#7a7872",
 }
 DARK = {
     "app_bg"   : "#141618",
@@ -63,39 +69,44 @@ DARK = {
     "border"   : "#2c3033",
     "pink_lt"  : "#1c2420",
     "chart_pl" : "#232729",
+    # tabel HTML
+    "tbl_hdr"  : "#272b2d",
+    "tbl_row"  : "#1e2123",
+    "tbl_alt"  : "#232729",
+    "tbl_txt"  : "#e4e1da",
+    "tbl_muted": "#888680",
 }
 
 # ===========================================================================
-# SIDEBAR — Dark Mode Toggle first, then Filters
+# SIDEBAR — Dark Mode Toggle HARUS PERTAMA sebelum T dipakai
 # ===========================================================================
 with st.sidebar:
     st.markdown("""
-    <div style='display:flex;align-items:center;gap:12px;padding:4px 0 18px 0;'>
+    <div style='display:flex;align-items:center;gap:12px;padding:4px 0 14px 0;'>
         <div style='width:42px;height:42px;border-radius:12px;
                     background:linear-gradient(135deg,#6f816e,#936b43);
                     display:flex;align-items:center;justify-content:center;font-size:20px;
-                    box-shadow:0 3px 12px rgba(111,129,110,0.35);flex-shrink:0;'>🌍</div>
+                    box-shadow:0 3px 12px rgba(111,129,110,0.35);flex-shrink:0;'>&#127757;</div>
         <div>
             <div style='font-size:14px;font-weight:700;line-height:1.2;'>Cost of Living</div>
             <div style='font-size:11px;opacity:0.5;font-weight:500;margin-top:2px;'>
                 Data Mining &middot; Final Project</div>
         </div>
     </div>""", unsafe_allow_html=True)
+    st.markdown("<hr style='margin:6px 0 10px 0;'>", unsafe_allow_html=True)
+    dark_mode = st.toggle("🌙 Dark Mode", value=False)
+    st.markdown("<hr style='margin:10px 0 8px 0;'>", unsafe_allow_html=True)
+    st.markdown(
+        "<span style='font-size:10px;font-weight:700;letter-spacing:0.12em;"
+        "opacity:0.5;text-transform:uppercase;'>Filters</span>",
+        unsafe_allow_html=True
+    )
 
-    st.markdown("---")
-    dark_mode = st.toggle("Dark Mode", value=False)
-    st.markdown("---")
-
-    st.markdown("<span style='font-size:10px;font-weight:700;letter-spacing:0.12em;"
-                "opacity:0.5;text-transform:uppercase;'>Filters</span>",
-                unsafe_allow_html=True)
-    st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
-
-# Resolve theme
+# Resolve theme SEGERA setelah toggle dibaca
 T = DARK if dark_mode else LIGHT
 
 # ===========================================================================
-# CSS INJECTION
+# CSS INJECTION — semua warna sudah pakai T yang benar
 # ===========================================================================
 st.markdown(f"""
 <style>
@@ -109,50 +120,15 @@ html, body, .stApp {{
     color: {T['text']} !important;
 }}
 
-/* ── Hide Streamlit chrome ── */
-#MainMenu, footer {{
+/* Sembunyikan chrome bawaan Streamlit */
+#MainMenu, footer, header,
+[data-testid="stToolbar"],
+[data-testid="stDecoration"] {{
     display: none !important;
+    visibility: hidden !important;
 }}
-/* ── Sidebar toggle button — visible di Streamlit Cloud ── */
-[data-testid="collapsedControl"] {{
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: {T['card_bg']} !important;
-    color: {T['text']} !important;
-    border: 1.5px solid {T['border']} !important;
-    border-radius: 10px !important;
-    width: 38px !important;
-    height: 38px !important;
-    position: fixed !important;
-    top: 14px !important;
-    left: 14px !important;
-    z-index: 999999 !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important;
-    cursor: pointer !important;
-}}
-[data-testid="collapsedControl"]:hover {{
-    background: {T['primary']} !important;
-    border-color: {T['primary']} !important;
-    color: #ffffff !important;
-}}
-[data-testid="collapsedControl"] svg {{
-    fill: {T['text']} !important;
-    width: 18px !important;
-    height: 18px !important;
-}}
-[data-testid="collapsedControl"]:hover svg {{
-    fill: #ffffff !important;
-}}
-/* Pastikan sidebar tidak tersembunyi */
-section[data-testid="stSidebar"] {{
-    display: block !important;
-    visibility: visible !important;
-}}
+.stDeployButton {{ display: none !important; }}
 
-/* ── Block container ── */
 .block-container {{
     padding: 1.5rem 2rem 2rem 2rem !important;
     max-width: 100% !important;
@@ -170,20 +146,20 @@ section[data-testid="stSidebar"] * {{
 }}
 section[data-testid="stSidebar"] hr {{
     border-color: {T['border']} !important;
-    margin: 10px 0 !important;
+    margin: 6px 0 !important;
 }}
 
-/* Sidebar widgets — white cards on off-white bg */
+/* Sidebar widget cards */
 section[data-testid="stSidebar"] .stSelectbox,
 section[data-testid="stSidebar"] .stSlider,
 section[data-testid="stSidebar"] .stNumberInput,
 section[data-testid="stSidebar"] .stMultiSelect {{
     background-color: {T['card_bg']} !important;
-    padding: 10px 12px !important;
-    border-radius: 12px !important;
+    padding: 8px 10px !important;
+    border-radius: 10px !important;
     border: 1px solid {T['border']} !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 6px !important;
 }}
 section[data-testid="stSidebar"] .stSelectbox > div > div {{
     background-color: {T['card_bg']} !important;
@@ -197,7 +173,6 @@ section[data-testid="stSidebar"] .stNumberInput input {{
     border-radius: 8px !important;
     color: {T['text']} !important;
     font-weight: 600 !important;
-    font-family: 'Sora', sans-serif !important;
 }}
 section[data-testid="stSidebar"] .stNumberInput input:focus {{
     border-color: {T['primary']} !important;
@@ -205,7 +180,7 @@ section[data-testid="stSidebar"] .stNumberInput input:focus {{
     outline: none !important;
 }}
 
-/* Slider — neutral grey track, sage thumb, no color bleed */
+/* Slider — track abu-abu bersih, thumb sage */
 section[data-testid="stSidebar"] .stSlider > div > div > div {{
     background: {T['border']} !important;
 }}
@@ -217,11 +192,21 @@ section[data-testid="stSidebar"] .stSlider [role="slider"] {{
     border: 2px solid {T['card_bg']} !important;
     box-shadow: 0 0 0 2.5px {T['primary']} !important;
 }}
-section[data-testid="stSidebar"] [data-testid="stTickBar"] {{
+
+/* FIX: angka tick slider — hapus background putih/abu stabilo */
+section[data-testid="stSidebar"] .stSlider span,
+section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMin"],
+section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMax"],
+section[data-testid="stSidebar"] .stSlider [data-testid="stThumbValue"] {{
     background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: {T['muted']} !important;
+    font-size: 10px !important;
 }}
 
-/* Number input +/- buttons */
+/* Number +/- buttons */
 section[data-testid="stSidebar"] .stNumberInput div[data-baseweb="input"] {{
     background-color: {T['card_bg']} !important;
     border: 1px solid {T['border']} !important;
@@ -234,7 +219,7 @@ section[data-testid="stSidebar"] .stNumberInput button {{
     border-left: 1px solid {T['border']} !important;
 }}
 
-/* Run button */
+/* Run button — gradient sage→amber */
 section[data-testid="stSidebar"] .stButton > button {{
     background: linear-gradient(135deg, {T['primary']}, {T['accent']}) !important;
     color: #ffffff !important;
@@ -245,13 +230,25 @@ section[data-testid="stSidebar"] .stButton > button {{
     padding: 10px 18px !important;
     width: 100% !important;
     letter-spacing: 0.03em !important;
-    box-shadow: 0 3px 12px {T['primary']}44 !important;
+    box-shadow: 0 3px 12px {T['primary']}55 !important;
     transition: all 0.18s ease !important;
     font-family: 'Sora', sans-serif !important;
 }}
 section[data-testid="stSidebar"] .stButton > button:hover {{
     opacity: 0.88 !important;
     transform: translateY(-1px) !important;
+}}
+
+/* Dark Mode Toggle */
+[data-baseweb="toggle"] {{
+    background-color: #bdb7ae !important;
+    transition: background-color 0.2s !important;
+}}
+[data-baseweb="toggle"][aria-checked="true"] {{
+    background-color: {T['primary']} !important;
+}}
+[data-baseweb="toggle"] div {{
+    background-color: #ffffff !important;
 }}
 
 /* ── Tabs ── */
@@ -336,75 +333,58 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
 .page-title {{ font-size:20px; font-weight:700; color:{T['text']}; margin:0; font-family:'Sora',sans-serif; }}
 .page-sub   {{ font-size:12px; color:{T['muted']}; }}
 
-/* ── Dataframe: full theme-aware contrast ── */
-[data-testid="stDataFrame"] > div,
-[data-testid="stDataFrame"] > div > div,
-[data-testid="stDataFrameResizable"] {{
-    border-radius: 14px !important;
-    border: 1px solid {T['border']} !important;
-    overflow: hidden !important;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.06) !important;
-    background-color: {T['card_bg']} !important;
+/* ── HTML Custom Table — sepenuhnya dikontrol, bukan canvas ── */
+.custom-table {{
+    width:100%;
+    border-collapse: collapse;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid {T['border']};
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
 }}
-
-/* Header */
-[data-testid="stDataFrame"] th,
-[data-testid="stDataFrame"] th * {{
-    background-color: {T['surface2']} !important;
-    color: {T['text']} !important;
-    font-size: 10.5px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.08em !important;
-    border-bottom: 2px solid {T['primary']}66 !important;
-    padding: 10px 14px !important;
-    font-family: 'Sora', sans-serif !important;
-    opacity: 1 !important;
+.custom-table thead tr {{
+    background-color: {T['tbl_hdr']};
 }}
-
-/* Cells */
-[data-testid="stDataFrame"] td,
-[data-testid="stDataFrame"] td * {{
-    font-size: 13px !important;
-    color: {T['text']} !important;
-    background-color: {T['card_bg']} !important;
-    border-bottom: 1px solid {T['border']} !important;
-    padding: 9px 14px !important;
-    opacity: 1 !important;
+.custom-table thead th {{
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: {T['tbl_muted']};
+    border-bottom: 2px solid {T['primary']}55;
 }}
-
-/* Zebra stripe */
-[data-testid="stDataFrame"] tr:nth-child(even) td,
-[data-testid="stDataFrame"] tr:nth-child(even) td * {{
-    background-color: {T['surface']} !important;
+.custom-table tbody tr:nth-child(odd) {{
+    background-color: {T['tbl_row']};
 }}
-
-/* Hover */
-[data-testid="stDataFrame"] tr:hover td,
-[data-testid="stDataFrame"] tr:hover td * {{
-    background-color: {T['primary']}18 !important;
+.custom-table tbody tr:nth-child(even) {{
+    background-color: {T['tbl_alt']};
 }}
-
-/* Semua div dalam dataframe ikut tema */
-[data-testid="stDataFrame"] div,
-[data-testid="stDataFrame"] div * {{
-    background-color: {T['card_bg']} !important;
-    color: {T['text']} !important;
+.custom-table tbody tr:hover {{
+    background-color: {T['primary']}14;
 }}
-
-/* Scroller */
-.dvn-scroller,
-.dvn-scroller * {{
-    background-color: {T['card_bg']} !important;
+.custom-table tbody td {{
+    padding: 9px 16px;
+    color: {T['tbl_txt']};
+    border-bottom: 1px solid {T['border']};
+    font-size: 13px;
 }}
-
-/* Canvas text (Streamlit dataframe pakai canvas) */
-[data-testid="stDataFrame"] canvas {{
-    filter: {
-        "none" if not dark_mode
-        else "invert(0)"
-    } !important;
+.custom-table tbody tr:last-child td {{
+    border-bottom: none;
 }}
+/* Rank badge */
+.rank-badge {{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:50%;
+    background:{T['primary']}22; color:{T['primary']};
+    font-size:11px; font-weight:700;
+}}
+.rank-badge.gold   {{ background:#ffd70022; color:#b8860b; }}
+.rank-badge.silver {{ background:#c0c0c022; color:#707070; }}
+.rank-badge.bronze {{ background:#cd7f3222; color:#8b4513; }}
 
 /* ── Method pills ── */
 .method-pill {{
@@ -426,76 +406,64 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
 ::-webkit-scrollbar-thumb {{ background:{T['border']}; border-radius:3px; }}
 ::-webkit-scrollbar-thumb:hover {{ background:{T['muted']}; }}
 
-
-/* HILANGKAN TOP BAR HITAM */
-header {{
-    display: none !important;
-}}
-
-[data-testid="stToolbar"] {{
-    display: none !important;
-}}
-
-[data-testid="stDecoration"] {{
-    display: none !important;
-}}
-
-.block-container {{
-    padding-top: 1.5rem !important;
-}}
-
-
-/* FIX DARK MODE TOGGLE */
-
-/* track */
-[data-baseweb="toggle"] {{
-    background-color: #bdb7ae !important;
-}}
-
-/* active */
-[data-baseweb="toggle"][aria-checked="true"] {{
-    background-color: {T['primary']} !important;
-}}
-
-/* circle */
-[data-baseweb="toggle"] div {{
-    background-color: white !important;
-}}
-
-/* ── Fix slider tick min/max — hapus background stabilo ── */
-section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMin"],
-section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMax"] {{
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    color: {T['muted']} !important;
-    font-size: 10px !important;
-}}
-section[data-testid="stSidebar"] .stSlider [data-testid="stThumbValue"] {{
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    color: {T['text']} !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
-}}
-/* Hapus semua background pada span di dalam slider */
-section[data-testid="stSidebar"] .stSlider span {{
-    background: transparent !important;
-    box-shadow: none !important;
+/* st.dataframe fallback — tetap bersih kalau masih dipakai */
+[data-testid="stDataFrame"] > div {{
+    border-radius: 14px !important;
+    border: 1px solid {T['border']} !important;
+    overflow: hidden !important;
+    background-color: {T['card_bg']} !important;
 }}
 </style>
 """, unsafe_allow_html=True)
+
+
+# ===========================================================================
+# UTILITY: render HTML table yang SELALU terlihat (bukan canvas)
+# ===========================================================================
+def html_table(df: pd.DataFrame, rank_col: bool = False) -> str:
+    """
+    Render DataFrame sebagai HTML table yang fully-styled dan selalu terlihat.
+    Tidak bergantung pada canvas Streamlit — teks pasti muncul.
+    """
+    badge_colors = ["gold", "silver", "bronze"]
+
+    headers = "".join(
+        f"<th>{'#' if rank_col else ''}{col}</th>"
+        if col == df.columns[0] and rank_col
+        else f"<th>{col}</th>"
+        for col in df.columns
+    )
+
+    rows_html = ""
+    for i, (_, row) in enumerate(df.iterrows()):
+        cells = ""
+        for j, val in enumerate(row):
+            if j == 0 and rank_col:
+                rank = i + 1
+                badge_cls = badge_colors[i] if i < 3 else ""
+                cells += f"<td><span class='rank-badge {badge_cls}'>{rank}</span>&nbsp;&nbsp;{val}</td>"
+            else:
+                cells += f"<td>{val}</td>"
+        rows_html += f"<tr>{cells}</tr>"
+
+    return f"""
+    <div style='overflow-x:auto; margin-bottom:8px;'>
+    <table class='custom-table'>
+        <thead><tr>{headers}</tr></thead>
+        <tbody>{rows_html}</tbody>
+    </table>
+    </div>
+    """
+
 
 # ===========================================================================
 # LOAD & PREPROCESSING
 # ===========================================================================
 @st.cache_data
 def load_and_preprocess():
-
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_dir, 'cost-of-living.csv')
-    df = pd.read_csv(file_path)
+    file_path   = os.path.join(current_dir, "cost-of-living.csv")
+    df     = pd.read_csv(file_path)
     x_cols = [c for c in df.columns if c.startswith("x")]
     df[x_cols] = df[x_cols].fillna(df[x_cols].median())
 
@@ -509,7 +477,7 @@ def load_and_preprocess():
     country_df["Recommendation_Score"] = np.where(
         country_df["CLI"] > 0, country_df["x54"] / country_df["CLI"], np.nan
     )
-    country_df = country_df.dropna(subset=["CLI","Recommendation_Score","x54"])
+    country_df = country_df.dropna(subset=["CLI", "Recommendation_Score", "x54"])
 
     feature_cols   = ["x1","x3","x8","x28","x33","x36","x48","x49","x54","CLI"]
     feature_matrix = country_df[feature_cols].values
@@ -536,19 +504,19 @@ def run_kmeans(k, _fs):
 @st.cache_data
 def compute_elbow(_fs, max_k=8):
     inertias = []
-    for k in range(2, max_k+1):
+    for k in range(2, max_k + 1):
         km = KMeans(n_clusters=k, random_state=42, n_init=10)
         km.fit(_fs); inertias.append(km.inertia_)
-    return list(range(2, max_k+1)), inertias
+    return list(range(2, max_k + 1)), inertias
 
 @st.cache_data
 def compute_silhouette(_fs, max_k=8):
     scores = []
-    for k in range(2, max_k+1):
+    for k in range(2, max_k + 1):
         km  = KMeans(n_clusters=k, random_state=42, n_init=10)
         lbl = km.fit_predict(_fs)
         scores.append(silhouette_score(_fs, lbl))
-    return list(range(2, max_k+1)), scores
+    return list(range(2, max_k + 1)), scores
 
 @st.cache_data
 def compute_feature_analysis(_country_data):
@@ -570,54 +538,58 @@ mi_df, top10_features = compute_feature_analysis(country_data)
 
 def get_cluster_label(cid):
     return {
-        0:"High Cost · High Income", 1:"Affordable Emerging",
-        2:"Mid-Tier Balanced",       3:"Budget Frontier",
-        4:"Developing Low-Cost",     5:"Transitional Economy",
-        6:"Resource-Rich",           7:"Small Island Economy"
+        0: "High Cost · High Income", 1: "Affordable Emerging",
+        2: "Mid-Tier Balanced",       3: "Budget Frontier",
+        4: "Developing Low-Cost",     5: "Transitional Economy",
+        6: "Resource-Rich",           7: "Small Island Economy"
     }.get(cid, f"Cluster {cid+1}")
 
 def hybrid_recommend(ref, budget, salary, n):
-    if ref not in cosine_sim_matrix.index: return pd.DataFrame()
+    if ref not in cosine_sim_matrix.index:
+        return pd.DataFrame()
     sim_df = cosine_sim_matrix[ref].drop(ref).sort_values(ascending=False).reset_index()
-    sim_df.columns = ["country","similarity"]
+    sim_df.columns = ["country", "similarity"]
     filt = country_data[
-        (country_data["CLI"]<=budget) & (country_data["x54"]>=salary)
-    ][["country","CLI","x54","Recommendation_Score"]]
+        (country_data["CLI"] <= budget) & (country_data["x54"] >= salary)
+    ][["country", "CLI", "x54", "Recommendation_Score"]]
     res = sim_df.merge(filt, on="country").head(n)
-    res["Similarity (%)"] = (res["similarity"]*100).round(1)
+    res["Similarity (%)"] = (res["similarity"] * 100).round(1)
     res["CLI ($)"]        = res["CLI"].round(0).astype(int)
     res["Avg Salary ($)"] = res["x54"].round(0).astype(int)
     res["Rec. Score"]     = res["Recommendation_Score"].round(2)
-    return res[["country","Similarity (%)","CLI ($)","Avg Salary ($)","Rec. Score"]]
+    return res[["country", "Similarity (%)", "CLI ($)", "Avg Salary ($)", "Rec. Score"]]
 
 def pl(fig, h=400):
-    """Unified Plotly layout — axis labels hitam pekat, theme-aware."""
-    axis_color  = T["text"]     # 100% opaque, bukan muted
-    title_color = T["text"]
+    """
+    Unified Plotly layout.
+    FIX: axis label + tick warna PENUH (bukan muted) agar kontras
+         light mode → hitam (#0e1011), dark mode → putih (#e4e1da)
+    """
+    ax_color = T["text"]   # hitam pekat (light) atau putih (dark)
 
     fig.update_layout(
         height        = h,
         paper_bgcolor = T["card_bg"],
         plot_bgcolor  = T["chart_pl"],
         font          = dict(color=T["text"], family="Sora, sans-serif", size=12),
-        margin        = dict(t=30, b=36, l=10, r=10),
+        margin        = dict(t=30, b=40, l=10, r=10),
         xaxis = dict(
             gridcolor   = T["border"],
             linecolor   = T["border"],
-            tickfont    = dict(size=11, color=axis_color, family="Sora, sans-serif"),
-            title_font  = dict(size=12, color=title_color, family="Sora, sans-serif"),
-            zeroline    = False,
             showline    = True,
             linewidth   = 1,
+            zeroline    = False,
+            tickfont    = dict(size=11, color=ax_color, family="Sora, sans-serif"),
+            title_font  = dict(size=12, color=ax_color, family="Sora, sans-serif"),
         ),
         yaxis = dict(
             gridcolor   = T["border"],
             linecolor   = T["border"],
-            tickfont    = dict(size=11, color=axis_color, family="Sora, sans-serif"),
-            title_font  = dict(size=12, color=title_color, family="Sora, sans-serif"),
-            zeroline    = False,
             showline    = True,
             linewidth   = 1,
+            zeroline    = False,
+            tickfont    = dict(size=11, color=ax_color, family="Sora, sans-serif"),
+            title_font  = dict(size=12, color=ax_color, family="Sora, sans-serif"),
         ),
         legend = dict(
             bgcolor     = T["card_bg"],
@@ -626,14 +598,14 @@ def pl(fig, h=400):
             font        = dict(size=11, color=T["text"])
         )
     )
-    # Paksa semua axis yang mungkin sudah di-set sebelumnya
+    # update_xaxes/yaxes override semua subplot sekaligus
     fig.update_xaxes(
-        tickfont   = dict(color=axis_color, size=11, family="Sora, sans-serif"),
-        title_font = dict(color=title_color, size=12, family="Sora, sans-serif"),
+        tickfont   = dict(color=ax_color, size=11, family="Sora, sans-serif"),
+        title_font = dict(color=ax_color, size=12, family="Sora, sans-serif"),
     )
     fig.update_yaxes(
-        tickfont   = dict(color=axis_color, size=11, family="Sora, sans-serif"),
-        title_font = dict(color=title_color, size=12, family="Sora, sans-serif"),
+        tickfont   = dict(color=ax_color, size=11, family="Sora, sans-serif"),
+        title_font = dict(color=ax_color, size=12, family="Sora, sans-serif"),
     )
     return fig
 
@@ -644,7 +616,7 @@ BOX_COLORS     = [T["primary"], T["accent"], T["second"], "#7a9bb5", T["muted"]]
 
 
 # ===========================================================================
-# SIDEBAR — Filters (continued)
+# SIDEBAR — Filters lanjutan
 # ===========================================================================
 with st.sidebar:
     user_country = st.selectbox(
@@ -658,14 +630,16 @@ with st.sidebar:
     top_n      = st.number_input("Top-N Negara", min_value=3, max_value=30, value=10)
     k_clusters = st.slider("Jumlah Cluster (K)", 2, 8, 4)
 
-    st.markdown("---")
+    st.markdown("<hr style='margin:10px 0 8px 0;'>", unsafe_allow_html=True)
     st.button("Run Analysis", use_container_width=True)
-    st.markdown("---")
+    st.markdown("<hr style='margin:10px 0 8px 0;'>", unsafe_allow_html=True)
 
-    st.markdown("<span style='font-size:10px;font-weight:700;letter-spacing:0.12em;"
-                "opacity:0.5;text-transform:uppercase;'>Metode</span>",
-                unsafe_allow_html=True)
-    st.markdown("""<div style='margin-top:8px;'>
+    st.markdown(
+        "<span style='font-size:10px;font-weight:700;letter-spacing:0.12em;"
+        "opacity:0.5;text-transform:uppercase;'>Metode</span>",
+        unsafe_allow_html=True
+    )
+    st.markdown("""<div style='margin-top:6px;'>
     <span class='method-pill'>K-Means</span>
     <span class='method-pill'>PCA</span>
     <span class='method-pill'>Cosine Sim</span>
@@ -695,17 +669,17 @@ with tab1:
         <span class='page-sub'>Cost of Living &middot; Country-Level Analysis</span>
     </div>""", unsafe_allow_html=True)
 
-    top_c     = country_data.nlargest(1,"Recommendation_Score")["country"].values[0]
-    top_score = country_data.nlargest(1,"Recommendation_Score")["Recommendation_Score"].values[0]
+    top_c     = country_data.nlargest(1, "Recommendation_Score")["country"].values[0]
+    top_score = country_data.nlargest(1, "Recommendation_Score")["Recommendation_Score"].values[0]
 
     col1, col2, col3, col4 = st.columns(4)
     cards = [
-        ("Total Negara",       str(len(country_data)),                   "Aktif dalam dataset",  "🌐"),
-        ("Avg CLI",            f"${country_data['CLI'].mean():,.0f}",    "Rata-rata global",      "📊"),
-        ("Avg Monthly Salary", f"${country_data['x54'].mean():,.0f}",   "Across all countries",  "💼"),
-        ("Top Score Country",  top_c,                                    f"Score {top_score:.2f}","🏆"),
+        ("Total Negara",       str(len(country_data)),                  "Aktif dalam dataset",  "🌐"),
+        ("Avg CLI",            f"${country_data['CLI'].mean():,.0f}",   "Rata-rata global",      "📊"),
+        ("Avg Monthly Salary", f"${country_data['x54'].mean():,.0f}",  "Across all countries",  "💼"),
+        ("Top Score Country",  top_c,                                   f"Score {top_score:.2f}","🏆"),
     ]
-    for col, (name, val, sub, icon) in zip([col1,col2,col3,col4], cards):
+    for col, (name, val, sub, icon) in zip([col1, col2, col3, col4], cards):
         with col:
             st.markdown(f"""
             <div class='metric-card'>
@@ -718,7 +692,8 @@ with tab1:
             </div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<div class='section-title'>Peta Distribusi Recommendation Score</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Peta Distribusi Recommendation Score</div>",
+                unsafe_allow_html=True)
 
     fig_map = px.choropleth(
         country_data, locations="country", locationmode="country names",
@@ -732,55 +707,58 @@ with tab1:
         geo=dict(bgcolor=T["chart_pl"], showframe=False, showcoastlines=True,
                  coastlinecolor=T["border"], landcolor=T["surface"],
                  oceancolor="#d8eaf2" if not dark_mode else "#1a2830", showocean=True),
-        coloraxis_colorbar=dict(title="Score", tickfont=dict(color=T["text"],size=11)),
-        margin=dict(t=10,b=10,l=0,r=0),
+        coloraxis_colorbar=dict(title="Score", tickfont=dict(color=T["text"], size=11)),
+        margin=dict(t=10, b=10, l=0, r=0),
         font=dict(color=T["text"], family="Sora, sans-serif")
     )
-    st.plotly_chart(fig_map, use_container_width=True, config={"displayModeBar":False})
+    st.plotly_chart(fig_map, use_container_width=True, config={"displayModeBar": False})
 
+    # ── Top 7 sebagai HTML table (bukan st.dataframe) ──
     st.markdown("<div class='section-title'>Top 7 Negara — Recommendation Score Tertinggi</div>",
                 unsafe_allow_html=True)
     display_df         = country_data[["country","CLI","x54","Recommendation_Score"]].copy()
-    display_df.columns = ["Country","CLI ($)","Avg Salary ($)","Rec. Score"]
-    display_df         = display_df.round(2).sort_values("Rec. Score", ascending=False).head(7).reset_index(drop=True)
-    st.dataframe(display_df, use_container_width=True, height=320)
+    display_df.columns = ["Country", "CLI ($)", "Avg Salary ($)", "Rec. Score"]
+    display_df         = (display_df
+                          .round(2)
+                          .sort_values("Rec. Score", ascending=False)
+                          .head(7)
+                          .reset_index(drop=True))
+    st.markdown(html_table(display_df, rank_col=True), unsafe_allow_html=True)
 
-    # Keterangan variabel
+    # ── Keterangan variabel ──
     st.markdown(f"""
-    <div style='display:flex; gap:12px; margin-top:10px; flex-wrap:wrap;'>
-        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:10px;
-                    padding:10px 16px;flex:1;min-width:160px;'>
-            <div style='font-size:10px;font-weight:700;color:{T["muted"]};
-                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;'>
-                CLI ($)
+    <div style='display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;'>
+        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:12px;
+                    padding:12px 16px;flex:1;min-width:160px;'>
+            <div style='font-size:10px;font-weight:700;color:{T["primary"]};
+                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;'>
+                CLI ($) — Cost of Living Index
             </div>
-            <div style='font-size:12.5px;color:{T["text"]};line-height:1.5;'>
-                <b>Cost of Living Index</b> — indeks gabungan biaya hidup bulanan
-                (makan 35%, sewa 40%, utilitas 15%, bensin 10%).
-                Makin kecil = negara makin terjangkau.
+            <div style='font-size:12.5px;color:{T["text"]};line-height:1.55;'>
+                Indeks gabungan biaya hidup bulanan: makan 35%, sewa 40%,
+                utilitas 15%, bensin 10%. Makin kecil = makin terjangkau.
             </div>
         </div>
-        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:10px;
-                    padding:10px 16px;flex:1;min-width:160px;'>
-            <div style='font-size:10px;font-weight:700;color:{T["muted"]};
-                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;'>
-                Avg Salary ($)
+        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:12px;
+                    padding:12px 16px;flex:1;min-width:160px;'>
+            <div style='font-size:10px;font-weight:700;color:{T["primary"]};
+                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;'>
+                Avg Salary ($) — Gaji Bulanan Bersih
             </div>
-            <div style='font-size:12.5px;color:{T["text"]};line-height:1.5;'>
-                <b>Rata-rata gaji bulanan bersih</b> — direpresentasikan oleh variabel x54.
+            <div style='font-size:12.5px;color:{T["text"]};line-height:1.55;'>
+                Rata-rata gaji bulanan bersih (variabel x54 dataset).
                 Makin tinggi = potensi pendapatan lebih besar.
             </div>
         </div>
-        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:10px;
-                    padding:10px 16px;flex:1;min-width:160px;'>
-            <div style='font-size:10px;font-weight:700;color:{T["muted"]};
-                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;'>
-                Rec. Score
+        <div style='background:{T["surface"]};border:1px solid {T["border"]};border-radius:12px;
+                    padding:12px 16px;flex:1;min-width:160px;'>
+            <div style='font-size:10px;font-weight:700;color:{T["primary"]};
+                        text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;'>
+                Rec. Score — Recommendation Score
             </div>
-            <div style='font-size:12.5px;color:{T["text"]};line-height:1.5;'>
-                <b>Recommendation Score</b> = Avg Salary ÷ CLI.
-                Mengukur seberapa "worth it" suatu negara —
-                makin tinggi = gaji besar relatif terhadap biaya hidup.
+            <div style='font-size:12.5px;color:{T["text"]};line-height:1.55;'>
+                = Avg Salary &divide; CLI. Mengukur seberapa <i>worth it</i> suatu negara.
+                Makin tinggi = gaji besar relatif terhadap biaya hidup.
             </div>
         </div>
     </div>
@@ -797,12 +775,13 @@ with tab2:
         <span class='page-sub'>Feature Correlation &middot; Distributions &middot; Feature Selection</span>
     </div>""", unsafe_allow_html=True)
 
-    col_left, col_right = st.columns([2,1])
+    col_left, col_right = st.columns([2, 1])
 
     with col_left:
-        st.markdown("<div class='section-title'>Correlation Heatmap: Selected Features</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>Correlation Heatmap: Selected Features</div>",
+                    unsafe_allow_html=True)
         st.markdown("""<div class='info-box'>
-        10 fitur terpilih + CLI. Pemilihan berdasarkan relevansi terhadap x54 (Salary) sebagai target variabel.
+        10 fitur terpilih + CLI. Pemilihan berdasarkan relevansi terhadap x54 (Salary).
         </div>""", unsafe_allow_html=True)
 
         sel_cols   = ["x1","x3","x8","x28","x33","x36","x48","x49","x54","CLI"]
@@ -810,29 +789,24 @@ with tab2:
         corr_df    = country_data[sel_cols].copy()
         corr_df.columns = sel_labels
 
-        fig_corr, ax = plt.subplots(figsize=(8,6))
+        fig_corr, ax = plt.subplots(figsize=(8, 6))
         fig_corr.patch.set_facecolor(T["card_bg"])
         ax.set_facecolor(T["chart_pl"])
-        # Sage green to warm amber diverging palette
         cmap = sns.diverging_palette(140, 30, s=60, l=50, as_cmap=True)
         sns.heatmap(corr_df.corr(), annot=True, fmt=".2f", cmap=cmap, center=0, ax=ax,
                     linewidths=0.4, linecolor=T["border"],
-                    annot_kws={"size":8.5,"color":T["text"]},
-                    cbar_kws={"shrink":0.8})
-        ax.tick_params(colors=T["text"], labelsize=9, which="both")
-        ax.xaxis.label.set_color(T["text"])
-        ax.yaxis.label.set_color(T["text"])
-        for label in ax.get_xticklabels():
-            label.set_color(T["text"])
-            label.set_alpha(1.0)
-        for label in ax.get_yticklabels():
-            label.set_color(T["text"])
-            label.set_alpha(1.0)
+                    annot_kws={"size": 8.5, "color": T["text"]},
+                    cbar_kws={"shrink": 0.8})
+        # FIX: paksa semua tick label heatmap warna penuh
+        ax.tick_params(axis="both", colors=T["text"], labelsize=9, which="both")
+        for lbl in ax.get_xticklabels():
+            lbl.set_color(T["text"]); lbl.set_alpha(1.0)
+        for lbl in ax.get_yticklabels():
+            lbl.set_color(T["text"]); lbl.set_alpha(1.0)
         plt.xticks(rotation=45, ha="right", color=T["text"], fontsize=9)
         plt.yticks(color=T["text"], fontsize=9)
         plt.title("Correlation Matrix: Selected Features",
                   color=T["text"], pad=12, fontweight="bold", fontsize=11)
-        # Fix colorbar tick labels
         cbar = ax.collections[0].colorbar
         if cbar:
             cbar.ax.tick_params(colors=T["text"], labelsize=8)
@@ -847,8 +821,8 @@ with tab2:
         pl(fig_cli, 230)
         fig_cli.update_layout(xaxis_title="Cost of Living Index (USD)",
                               yaxis_title="Jumlah Negara",
-                              showlegend=False, margin=dict(t=10,b=10))
-        st.plotly_chart(fig_cli, use_container_width=True, config={"displayModeBar":False})
+                              showlegend=False, margin=dict(t=10, b=10))
+        st.plotly_chart(fig_cli, use_container_width=True, config={"displayModeBar": False})
 
         st.markdown("<div class='section-title'>Distribusi Salary</div>", unsafe_allow_html=True)
         fig_sal = px.histogram(country_data, x="x54", nbins=30,
@@ -856,42 +830,45 @@ with tab2:
         pl(fig_sal, 230)
         fig_sal.update_layout(xaxis_title="Monthly Salary (USD)",
                               yaxis_title="Jumlah Negara",
-                              showlegend=False, margin=dict(t=10,b=10))
-        st.plotly_chart(fig_sal, use_container_width=True, config={"displayModeBar":False})
+                              showlegend=False, margin=dict(t=10, b=10))
+        st.plotly_chart(fig_sal, use_container_width=True, config={"displayModeBar": False})
 
     # ── Feature Selection ──
     st.markdown("<div class='section-title'>Feature Selection — Mutual Information &amp; Variance</div>",
                 unsafe_allow_html=True)
     st.markdown("""<div class='info-box'>
-    <b>Mutual Information (MI)</b> mengukur seberapa besar informasi yang dibawa setiap fitur terhadap
-    target x54 (Salary) — menangkap hubungan non-linear. <b>Variance Threshold</b> menyaring fitur
-    hampir konstan di semua negara (threshold = 1.0).
+    <b>Mutual Information (MI)</b> mengukur informasi setiap fitur terhadap x54 (Salary).
+    <b>Variance Threshold</b> menyaring fitur hampir konstan (threshold = 1.0).
     </div>""", unsafe_allow_html=True)
 
-    col_mi, col_var = st.columns([3,2])
+    col_mi, col_var = st.columns([3, 2])
 
     with col_mi:
-        st.markdown("<div class='section-title'>MI Score: Semua Fitur vs x54</div>", unsafe_allow_html=True)
-        sel_feat   = ["x1","x3","x8","x28","x33","x36","x48","x49","x54","CLI"]
-        mi_plot    = mi_df.copy()
-        mi_plot["Warna"] = mi_plot["Feature"].isin(sel_feat).map({True:T["primary"], False:T["border"]})
-        mi_sorted  = mi_plot.sort_values("MI_Score", ascending=True).tail(30)
+        st.markdown("<div class='section-title'>MI Score: Semua Fitur vs x54</div>",
+                    unsafe_allow_html=True)
+        sel_feat = ["x1","x3","x8","x28","x33","x36","x48","x49","x54","CLI"]
+        mi_plot  = mi_df.copy()
+        mi_plot["Warna"] = mi_plot["Feature"].isin(sel_feat).map(
+            {True: T["primary"], False: T["border"]}
+        )
+        mi_sorted = mi_plot.sort_values("MI_Score", ascending=True).tail(30)
 
         fig_mi = go.Figure()
         fig_mi.add_trace(go.Bar(
             x=mi_sorted["MI_Score"], y=mi_sorted["Feature"], orientation="h",
             marker_color=mi_sorted["Warna"], marker_line_width=0,
             text=mi_sorted["MI_Score"].round(3), textposition="outside",
-            textfont=dict(size=9, color=T["muted"]),
+            textfont=dict(size=9, color=T["text"]),
             hovertemplate="<b>%{y}</b><br>MI Score: %{x:.4f}<extra></extra>"
         ))
         pl(fig_mi, 520)
         fig_mi.update_layout(xaxis_title="Mutual Information Score", yaxis_title="Feature",
-                              showlegend=False, margin=dict(t=10,b=30,l=10,r=60))
-        st.plotly_chart(fig_mi, use_container_width=True, config={"displayModeBar":False})
+                              showlegend=False, margin=dict(t=10, b=30, l=10, r=60))
+        st.plotly_chart(fig_mi, use_container_width=True, config={"displayModeBar": False})
 
     with col_var:
-        st.markdown("<div class='section-title'>Variance Threshold Analysis</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>Variance Threshold Analysis</div>",
+                    unsafe_allow_html=True)
         st.markdown("""<div class='info-box'>
         Fitur dengan varians sangat rendah tidak informatif. Threshold = 1.0.
         </div>""", unsafe_allow_html=True)
@@ -899,29 +876,33 @@ with tab2:
         fig_var = px.scatter(
             mi_df, x="Variance", y="MI_Score", text="Feature",
             color="Lolos_VarThreshold",
-            color_discrete_map={True:T["primary"], False:T["border"]},
-            labels={"Variance":"Variance","MI_Score":"MI Score","Lolos_VarThreshold":"Lolos Threshold"}
+            color_discrete_map={True: T["primary"], False: T["border"]},
+            labels={"Variance":"Variance","MI_Score":"MI Score",
+                    "Lolos_VarThreshold":"Lolos Threshold"}
         )
-        fig_var.update_traces(textposition="top center",
-                              textfont=dict(size=7,color=T["muted"]),
-                              marker=dict(size=8,opacity=0.85,
-                                          line=dict(color=T["card_bg"],width=1)))
+        fig_var.update_traces(
+            textposition="top center",
+            textfont=dict(size=7, color=T["text"]),
+            marker=dict(size=8, opacity=0.85, line=dict(color=T["card_bg"], width=1))
+        )
         fig_var.add_vline(x=1.0, line_dash="dash", line_color=T["accent"],
                           annotation_text="Threshold=1.0",
                           annotation_font_color=T["accent"], annotation_font_size=10)
         pl(fig_var, 280)
         fig_var.update_layout(showlegend=True,
-                              legend=dict(font=dict(size=10,color=T["text"]),title=""),
-                              margin=dict(t=10,b=10),
+                              legend=dict(font=dict(size=10, color=T["text"]), title=""),
+                              margin=dict(t=10, b=10),
                               xaxis_title="Variance", yaxis_title="MI Score")
-        st.plotly_chart(fig_var, use_container_width=True, config={"displayModeBar":False})
+        st.plotly_chart(fig_var, use_container_width=True, config={"displayModeBar": False})
 
-        st.markdown("<div class='section-title'>Ringkasan Feature Selection</div>", unsafe_allow_html=True)
-        st.dataframe(pd.DataFrame({
+        st.markdown("<div class='section-title'>Ringkasan Feature Selection</div>",
+                    unsafe_allow_html=True)
+        summary_data = pd.DataFrame({
             "Metode"    : ["Total fitur awal","Lolos Var Threshold","Top 10 MI","Final model"],
             "Jumlah"    : [len(mi_df), int(mi_df["Lolos_VarThreshold"].sum()), 10, 10],
             "Keterangan": ["x1-x55","Variance > 1.0","MI tertinggi","K-Means & Cosine Sim"]
-        }), use_container_width=True, hide_index=True)
+        })
+        st.markdown(html_table(summary_data), unsafe_allow_html=True)
 
     # ── Normalisasi Box Plots ──
     st.markdown("<div class='section-title'>Normalisasi: Sebelum vs Sesudah StandardScaler</div>",
@@ -939,18 +920,24 @@ with tab2:
 
     cb, ca = st.columns(2)
     with cb:
-        st.markdown("<div class='section-title'>Sebelum Normalisasi (Raw)</div>", unsafe_allow_html=True)
-        fb = px.box(rmlt, x="Feature", y="Value", color="Feature", color_discrete_sequence=BOX_COLORS)
+        st.markdown("<div class='section-title'>Sebelum Normalisasi (Raw)</div>",
+                    unsafe_allow_html=True)
+        fb = px.box(rmlt, x="Feature", y="Value", color="Feature",
+                    color_discrete_sequence=BOX_COLORS)
         pl(fb, 300)
-        fb.update_layout(showlegend=False, xaxis_title="", yaxis_title="Value (USD)", margin=dict(t=10,b=10))
-        st.plotly_chart(fb, use_container_width=True, config={"displayModeBar":False})
+        fb.update_layout(showlegend=False, xaxis_title="Feature",
+                          yaxis_title="Value (USD)", margin=dict(t=10, b=10))
+        st.plotly_chart(fb, use_container_width=True, config={"displayModeBar": False})
 
     with ca:
-        st.markdown("<div class='section-title'>Sesudah Normalisasi (Z-Score)</div>", unsafe_allow_html=True)
-        fa = px.box(smlt, x="Feature", y="Value", color="Feature", color_discrete_sequence=BOX_COLORS)
+        st.markdown("<div class='section-title'>Sesudah Normalisasi (Z-Score)</div>",
+                    unsafe_allow_html=True)
+        fa = px.box(smlt, x="Feature", y="Value", color="Feature",
+                    color_discrete_sequence=BOX_COLORS)
         pl(fa, 300)
-        fa.update_layout(showlegend=False, xaxis_title="", yaxis_title="Z-Score", margin=dict(t=10,b=10))
-        st.plotly_chart(fa, use_container_width=True, config={"displayModeBar":False})
+        fa.update_layout(showlegend=False, xaxis_title="Feature",
+                          yaxis_title="Z-Score", margin=dict(t=10, b=10))
+        st.plotly_chart(fa, use_container_width=True, config={"displayModeBar": False})
 
     # ── Scatter + Top 15 ──
     st.markdown("<div class='section-title'>Scatter: Monthly Salary vs Cost of Living Index</div>",
@@ -965,16 +952,18 @@ with tab2:
     pl(fig_sc, 400)
     fig_sc.update_layout(xaxis_title="Cost of Living Index (USD)",
                           yaxis_title="Monthly Salary (USD)")
-    st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar":False})
+    st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar": False})
 
-    st.markdown("<div class='section-title'>Top 15 Negara by Recommendation Score</div>", unsafe_allow_html=True)
-    top15   = country_data.nlargest(15,"Recommendation_Score").sort_values("Recommendation_Score")
+    st.markdown("<div class='section-title'>Top 15 Negara by Recommendation Score</div>",
+                unsafe_allow_html=True)
+    top15   = country_data.nlargest(15, "Recommendation_Score").sort_values("Recommendation_Score")
     fig_top = px.bar(top15, x="Recommendation_Score", y="country", orientation="h",
                      color="Recommendation_Score", color_continuous_scale=CSCALE,
                      labels={"Recommendation_Score":"Recommendation Score","country":"Country"})
     pl(fig_top, 450)
-    fig_top.update_layout(showlegend=False, xaxis_title="Recommendation Score", yaxis_title="Country")
-    st.plotly_chart(fig_top, use_container_width=True, config={"displayModeBar":False})
+    fig_top.update_layout(showlegend=False,
+                           xaxis_title="Recommendation Score", yaxis_title="Country")
+    st.plotly_chart(fig_top, use_container_width=True, config={"displayModeBar": False})
 
 
 # ============================================================
@@ -996,17 +985,18 @@ with tab3:
 
         ks, inertias = compute_elbow(feature_scaled)
         fe = go.Figure()
-        fe.add_trace(go.Scatter(x=ks, y=inertias, mode="lines+markers",
-                                line=dict(color=T["primary"],width=2.5),
-                                marker=dict(size=9,color=T["card_bg"],
-                                            line=dict(color=T["primary"],width=2.5))))
+        fe.add_trace(go.Scatter(
+            x=ks, y=inertias, mode="lines+markers",
+            line=dict(color=T["primary"], width=2.5),
+            marker=dict(size=9, color=T["card_bg"], line=dict(color=T["primary"], width=2.5))
+        ))
         fe.add_vline(x=k_clusters, line_dash="dash", line_color=T["accent"],
                      annotation_text=f"K = {k_clusters}",
                      annotation_font_color=T["accent"], annotation_font_size=12)
         pl(fe, 340)
         fe.update_layout(xaxis_title="Jumlah Cluster (K)",
                           yaxis_title="Inertia — Within-Cluster Sum of Squares")
-        st.plotly_chart(fe, use_container_width=True, config={"displayModeBar":False})
+        st.plotly_chart(fe, use_container_width=True, config={"displayModeBar": False})
 
     with cs:
         st.markdown("<div class='section-title'>Silhouette Score</div>", unsafe_allow_html=True)
@@ -1014,12 +1004,15 @@ with tab3:
                     unsafe_allow_html=True)
         ks_s, sil_s = compute_silhouette(feature_scaled)
         fs = go.Figure()
-        fs.add_trace(go.Bar(x=ks_s, y=sil_s,
-                            marker_color=[T["primary"] if k==k_clusters else T["border"] for k in ks_s],
-                            marker_line_width=0))
+        fs.add_trace(go.Bar(
+            x=ks_s, y=sil_s,
+            marker_color=[T["primary"] if k == k_clusters else T["border"] for k in ks_s],
+            marker_line_width=0
+        ))
         pl(fs, 340)
-        fs.update_layout(xaxis_title="Jumlah Cluster (K)", yaxis_title="Silhouette Score (0 - 1)")
-        st.plotly_chart(fs, use_container_width=True, config={"displayModeBar":False})
+        fs.update_layout(xaxis_title="Jumlah Cluster (K)",
+                          yaxis_title="Silhouette Score (0 - 1)")
+        st.plotly_chart(fs, use_container_width=True, config={"displayModeBar": False})
 
     st.markdown("<div class='section-title'>PCA Cluster Plot — Reduksi Dimensi 10D ke 2D</div>",
                 unsafe_allow_html=True)
@@ -1032,40 +1025,44 @@ with tab3:
     var_exp    = pca.explained_variance_ratio_
 
     pca_df = pd.DataFrame({
-        "PC1"    : pca_coords[:,0], "PC2": pca_coords[:,1],
+        "PC1"    : pca_coords[:, 0], "PC2": pca_coords[:, 1],
         "country": country_data["country"].values,
         "Cluster": [get_cluster_label(c) for c in cluster_labels],
         "CLI"    : country_data["CLI"].values.round(0),
         "Salary" : country_data["x54"].values.round(0)
     })
-    fp = px.scatter(pca_df, x="PC1", y="PC2", color="Cluster",
-                    hover_name="country", hover_data={"CLI":True,"Salary":True},
-                    labels={"PC1":f"PC1 — {var_exp[0]*100:.1f}% var",
-                            "PC2":f"PC2 — {var_exp[1]*100:.1f}% var"},
-                    color_discrete_sequence=CLUSTER_COLORS)
-    fp.update_traces(marker=dict(size=10, opacity=0.82, line=dict(color=T["card_bg"],width=1)))
+    fp = px.scatter(
+        pca_df, x="PC1", y="PC2", color="Cluster",
+        hover_name="country", hover_data={"CLI": True, "Salary": True},
+        labels={"PC1": f"PC1 — {var_exp[0]*100:.1f}% var",
+                "PC2": f"PC2 — {var_exp[1]*100:.1f}% var"},
+        color_discrete_sequence=CLUSTER_COLORS
+    )
+    fp.update_traces(marker=dict(size=10, opacity=0.82, line=dict(color=T["card_bg"], width=1)))
     pl(fp, 500)
-    fp.update_layout(xaxis_title=f"PC1 — {var_exp[0]*100:.1f}% Variance Explained",
-                      yaxis_title=f"PC2 — {var_exp[1]*100:.1f}% Variance Explained")
-    st.plotly_chart(fp, use_container_width=True, config={"displayModeBar":False})
+    fp.update_layout(
+        xaxis_title=f"PC1 — {var_exp[0]*100:.1f}% Variance Explained",
+        yaxis_title=f"PC2 — {var_exp[1]*100:.1f}% Variance Explained"
+    )
+    st.plotly_chart(fp, use_container_width=True, config={"displayModeBar": False})
 
     st.markdown("<div class='section-title'>Cluster Profiling</div>", unsafe_allow_html=True)
     clustered_df            = country_data.copy()
     clustered_df["Cluster"] = [get_cluster_label(c) for c in cluster_labels]
     profile = clustered_df.groupby("Cluster").agg(
         N_Negara   = ("country",             "count"),
-        Avg_CLI    = ("CLI",                 lambda x: round(x.mean(),0)),
-        Avg_Salary = ("x54",                 lambda x: round(x.mean(),0)),
-        Avg_Score  = ("Recommendation_Score", lambda x: round(x.mean(),2))
+        Avg_CLI    = ("CLI",                 lambda x: round(x.mean(), 0)),
+        Avg_Salary = ("x54",                 lambda x: round(x.mean(), 0)),
+        Avg_Score  = ("Recommendation_Score", lambda x: round(x.mean(), 2))
     ).reset_index()
     profile.columns = ["Cluster","N Negara","Avg CLI ($)","Avg Salary ($)","Avg Score"]
-    st.dataframe(profile, use_container_width=True)
+    st.markdown(html_table(profile), unsafe_allow_html=True)
 
     st.markdown("<div class='section-title'>Anggota per Cluster</div>", unsafe_allow_html=True)
     members         = clustered_df[["country","Cluster","CLI","x54","Recommendation_Score"]].copy()
     members.columns = ["Country","Cluster","CLI ($)","Salary ($)","Score"]
     members         = members.round(1).sort_values("Cluster").reset_index(drop=True)
-    st.dataframe(members, use_container_width=True, height=350)
+    st.markdown(html_table(members), unsafe_allow_html=True)
 
 
 # ============================================================
@@ -1084,20 +1081,21 @@ with tab4:
     berdasarkan Max Budget dan Min Salary dari sidebar.
     </div>""", unsafe_allow_html=True)
 
-    cr, crec = st.columns([1,2])
+    cr, crec = st.columns([1, 2])
 
     with cr:
-        st.markdown("<div class='section-title'>Profil Negara Referensi</div>", unsafe_allow_html=True)
-        ref_row = country_data[country_data["country"]==user_country]
+        st.markdown("<div class='section-title'>Profil Negara Referensi</div>",
+                    unsafe_allow_html=True)
+        ref_row = country_data[country_data["country"] == user_country]
         if not ref_row.empty:
-            rvars = ["x1","x28","x36","x48","x54"]
-            rlbls = ["Meal","Rent","Utilities","Gasoline","Salary"]
-            vals  = ref_row[rvars].values.flatten()
+            rvars  = ["x1","x28","x36","x48","x54"]
+            rlbls  = ["Meal","Rent","Utilities","Gasoline","Salary"]
+            vals   = ref_row[rvars].values.flatten()
             vals_n = (vals - vals.min()) / (vals.max() - vals.min() + 1e-9)
 
             fig_r = go.Figure()
             fig_r.add_trace(go.Scatterpolar(
-                r=np.append(vals_n, vals_n[0]), theta=rlbls+[rlbls[0]],
+                r=np.append(vals_n, vals_n[0]), theta=rlbls + [rlbls[0]],
                 fill="toself", name=user_country,
                 fillcolor="rgba(111,129,110,0.18)" if not dark_mode else "rgba(124,145,121,0.22)",
                 line=dict(color=T["primary"], width=2.5)
@@ -1105,76 +1103,85 @@ with tab4:
             fig_r.update_layout(
                 polar=dict(
                     radialaxis=dict(visible=True, range=[0,1],
-                                    gridcolor=T["border"], tickfont=dict(color=T["muted"],size=10)),
-                    angularaxis=dict(tickfont=dict(color=T["text"],size=11)),
+                                    gridcolor=T["border"],
+                                    tickfont=dict(color=T["text"], size=10)),
+                    angularaxis=dict(tickfont=dict(color=T["text"], size=11)),
                     bgcolor=T["chart_pl"]
                 ),
                 height=300, paper_bgcolor=T["card_bg"], showlegend=False,
                 font=dict(color=T["text"], family="Sora, sans-serif"),
-                margin=dict(t=20,b=20,l=20,r=20)
+                margin=dict(t=20, b=20, l=20, r=20)
             )
-            st.plotly_chart(fig_r, use_container_width=True, config={"displayModeBar":False})
+            st.plotly_chart(fig_r, use_container_width=True, config={"displayModeBar": False})
 
-            st.dataframe(pd.DataFrame({
-                "Metrik": ["CLI ($)","Avg Salary ($)","Rec. Score"],
+            ref_data = pd.DataFrame({
+                "Metrik": ["CLI ($)", "Avg Salary ($)", "Rec. Score"],
                 "Nilai" : [f"${ref_row['CLI'].values[0]:,.0f}",
                            f"${ref_row['x54'].values[0]:,.0f}",
                            f"{ref_row['Recommendation_Score'].values[0]:.2f}"]
-            }), use_container_width=True, hide_index=True)
+            })
+            st.markdown(html_table(ref_data), unsafe_allow_html=True)
 
     with crec:
-        st.markdown("<div class='section-title'>Top Rekomendasi Negara</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>Top Rekomendasi Negara</div>",
+                    unsafe_allow_html=True)
         recs = hybrid_recommend(user_country, max_budget, min_salary, int(top_n))
 
         if recs.empty:
             st.warning("Tidak ada negara yang memenuhi kriteria. Coba longgarkan budget atau salary minimum.")
         else:
-            st.dataframe(recs.reset_index(drop=True), use_container_width=True, height=300)
+            st.markdown(html_table(recs.reset_index(drop=True), rank_col=True),
+                        unsafe_allow_html=True)
 
-            st.markdown("<div class='section-title'>Cosine Similarity Score</div>", unsafe_allow_html=True)
-            fig_sim = px.bar(recs.sort_values("Similarity (%)"),
-                             x="Similarity (%)", y="country", orientation="h",
-                             color="Similarity (%)", color_continuous_scale=CSCALE,
-                             labels={"country":"Country","Similarity (%)":"Cosine Similarity (%)"})
+            st.markdown("<div class='section-title'>Cosine Similarity Score</div>",
+                        unsafe_allow_html=True)
+            fig_sim = px.bar(
+                recs.sort_values("Similarity (%)"),
+                x="Similarity (%)", y="country", orientation="h",
+                color="Similarity (%)", color_continuous_scale=CSCALE,
+                labels={"country":"Country","Similarity (%)":"Cosine Similarity (%)"}
+            )
             pl(fig_sim, 300)
-            fig_sim.update_layout(showlegend=False, xaxis_title="Cosine Similarity (%)",
+            fig_sim.update_layout(showlegend=False,
+                                   xaxis_title="Cosine Similarity (%)",
                                    yaxis_title="Country")
-            st.plotly_chart(fig_sim, use_container_width=True, config={"displayModeBar":False})
+            st.plotly_chart(fig_sim, use_container_width=True, config={"displayModeBar": False})
 
     if not recs.empty:
         st.markdown("<div class='section-title'>Perbandingan: Referensi vs Top 5 (Z-Score Heatmap)</div>",
                     unsafe_allow_html=True)
         st.markdown("""<div class='info-box'>
-        Z-Score normalisasi agar perbandingan antar variabel dengan skala berbeda tetap adil.
-        Background heatmap transparan — menyatu sempurna dengan container.
+        Z-Score agar perbandingan antar variabel dengan skala berbeda tetap adil.
         </div>""", unsafe_allow_html=True)
 
         all_c     = [user_country] + recs.head(5)["country"].tolist()
         comp_vars = ["x1","x28","x33","x36","x48","x54","CLI","Recommendation_Score"]
         comp_lbls = ["Meal","Rent","Groceries","Utilities","Gasoline","Salary","CLI","Score"]
-        comp_df   = country_data[country_data["country"].isin(all_c)][["country"]+comp_vars].set_index("country")
+        comp_df   = (country_data[country_data["country"].isin(all_c)]
+                     [["country"] + comp_vars].set_index("country"))
         comp_sc   = (comp_df - comp_df.mean()) / (comp_df.std() + 1e-9)
         comp_sc.columns = comp_lbls
 
-        fh = px.imshow(comp_sc,
-                       color_continuous_scale=[[0,T["accent"]],[0.5,T["card_bg"]],[1,T["primary"]]],
-                       aspect="auto", text_auto=".2f")
-        # Fully transparent — no black edges
+        fh = px.imshow(
+            comp_sc,
+            color_continuous_scale=[[0,T["accent"]],[0.5,T["card_bg"]],[1,T["primary"]]],
+            aspect="auto", text_auto=".2f"
+        )
         fh.update_layout(
             height=300,
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor ="rgba(0,0,0,0)",
             font=dict(color=T["text"], family="Sora, sans-serif", size=12),
-            margin=dict(t=10,b=10,l=10,r=10),
+            margin=dict(t=10, b=10, l=10, r=10),
             xaxis_title="Feature", yaxis_title="Country",
-            xaxis=dict(tickfont=dict(size=11,color=T["muted"]),
-                       title_font=dict(size=12,color=T["text"])),
-            yaxis=dict(tickfont=dict(size=11,color=T["muted"]),
-                       title_font=dict(size=12,color=T["text"])),
-            coloraxis_colorbar=dict(tickfont=dict(color=T["text"],size=10))
+            xaxis=dict(tickfont=dict(size=11, color=T["text"]),
+                       title_font=dict(size=12, color=T["text"])),
+            yaxis=dict(tickfont=dict(size=11, color=T["text"]),
+                       title_font=dict(size=12, color=T["text"])),
+            coloraxis_colorbar=dict(tickfont=dict(color=T["text"], size=10))
         )
         fh.update_traces(textfont=dict(color=T["text"], size=11))
-        st.plotly_chart(fh, use_container_width=True, config={"displayModeBar":False})
+        st.plotly_chart(fh, use_container_width=True, config={"displayModeBar": False})
 
 
 # ===========================================================================
