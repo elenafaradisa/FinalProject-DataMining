@@ -28,7 +28,7 @@ st.set_page_config(
     page_title            = "Cost of Living · Data Mining",
     page_icon             = "🌍",
     layout                = "wide",
-    initial_sidebar_state = "expanded"   
+    initial_sidebar_state = "auto"   
 )
 
 # ===========================================================================
@@ -126,28 +126,37 @@ footer {{ display: none !important; }}
 [data-testid="stToolbar"] {{ display: none !important; }}
 .stDeployButton {{ display: none !important; }}
 
+/* Hilangkan header Streamlit */
 header[data-testid="stHeader"] {{
-    background: transparent !important;
+    display: none !important;
 }}
 
-/* Sidebar */
+/* Hilangkan tombol hamburger */
+[data-testid="collapsedControl"] {{
+    display: none !important;
+}}
+
+/* Sidebar permanen */
 section[data-testid="stSidebar"] {{
-    background-color: {T['surface']} !important;
-    border-right: 1px solid {T['border']} !important;
+    display: block !important;
+    visibility: visible !important;
+    transform: translateX(0%) !important;
+    width: 320px !important;
+    min-width: 320px !important;
+    position: relative !important;
+}}
+
+/* Fix width internal sidebar */
+section[data-testid="stSidebar"] > div {{
+    width: 320px !important;
 }}
 
 .block-container {{
-    padding-top: 2rem !important;
-    padding-bottom: 3rem !important;
-    padding-left: 3rem !important;
-    padding-right: 3rem !important;
-    max-width: 1450px !important;
+    padding: 1.5rem 2rem 2rem 2rem !important;
+    max-width: 100% !important;
+    background-color: {T['app_bg']} !important;
 }}
 
-.js-plotly-plot, .plot-container {{
-    border-radius: 18px !important;
-    overflow: hidden !important;
-}}
 /* ── Sidebar ── */
 section[data-testid="stSidebar"] {{
     background-color: {T['surface']} !important;
@@ -426,14 +435,6 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     overflow: hidden !important;
     background-color: {T['card_bg']} !important;
 }}
-
-/* ── Hide sidebar collapse/expand button sepenuhnya ── */
-[data-testid="stSidebarCollapseButton"],
-[data-testid="collapsedControl"] {{
-    display: none !important;
-}}
-
-
 </style>
 """, unsafe_allow_html=True)
 
