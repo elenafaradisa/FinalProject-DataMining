@@ -28,7 +28,7 @@ st.set_page_config(
     page_title            = "Cost of Living · Data Mining",
     page_icon             = "🌍",
     layout                = "wide",
-    initial_sidebar_state = "expanded"   # FIX: selalu expanded
+    initial_sidebar_state = "auto"   
 )
 
 # ===========================================================================
@@ -94,7 +94,7 @@ with st.sidebar:
         </div>
     </div>""", unsafe_allow_html=True)
     st.markdown("<hr style='margin:6px 0 10px 0;'>", unsafe_allow_html=True)
-    dark_mode = st.toggle("Dark Mode", value=False)
+    dark_mode = st.toggle("🌙 Dark Mode", value=False)
     st.markdown("<hr style='margin:10px 0 8px 0;'>", unsafe_allow_html=True)
     st.markdown(
         "<span style='font-size:10px;font-weight:700;letter-spacing:0.12em;"
@@ -120,21 +120,34 @@ html, body, .stApp {{
     color: {T['text']} !important;
 }}
 
-/* Sembunyikan chrome bawaan Streamlit */
-#MainMenu, footer, header,
-[data-testid="stToolbar"],
-[data-testid="stDecoration"] {{
-    display: none !important;
-    visibility: hidden !important;
-}}
+#MainMenu {{ display: none !important; }}
+footer {{ display: none !important; }}
+[data-testid="stDecoration"] {{ display: none !important; }}
+[data-testid="stToolbar"] {{ display: none !important; }}
 .stDeployButton {{ display: none !important; }}
 
-.block-container {{
-    padding: 1.5rem 2rem 2rem 2rem !important;
-    max-width: 100% !important;
-    background-color: {T['app_bg']} !important;
+header[data-testid="stHeader"] {{
+    background: transparent !important;
 }}
 
+/* Sidebar */
+section[data-testid="stSidebar"] {{
+    background-color: {T['surface']} !important;
+    border-right: 1px solid {T['border']} !important;
+}}
+
+.block-container {{
+    padding-top: 2rem !important;
+    padding-bottom: 3rem !important;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    max-width: 1450px !important;
+}}
+
+.js-plotly-plot, .plot-container {{
+    border-radius: 18px !important;
+    overflow: hidden !important;
+}}
 /* ── Sidebar ── */
 section[data-testid="stSidebar"] {{
     background-color: {T['surface']} !important;
@@ -412,6 +425,20 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     border: 1px solid {T['border']} !important;
     overflow: hidden !important;
     background-color: {T['card_bg']} !important;
+}}
+
+/* ── FIX: Sidebar collapse button — sembunyikan teks icon Material ── */
+[data-testid="stSidebarCollapseButton"] * {{
+    font-family: 'Sora', sans-serif !important;
+    font-size: 0 !important;
+    color: transparent !important;
+    background: transparent !important;
+}}
+[data-testid="stSidebarCollapseButton"] svg {{
+    font-size: initial !important;
+    color: {T['muted']} !important;
+    width: 20px !important;
+    height: 20px !important;
 }}
 </style>
 """, unsafe_allow_html=True)
