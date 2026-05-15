@@ -82,31 +82,6 @@ DARK = {
 # ===========================================================================
 with st.sidebar:
     st.markdown("""
-    <style>
-    [data-testid="stSidebarCollapseButton"] button {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        font-size: 0 !important;
-        line-height: 0 !important;
-        color: transparent !important;
-        overflow: hidden !important;
-    }
-    [data-testid="stSidebarCollapseButton"] button::after {
-        content: '\25C0' !important;
-        font-size: 13px !important;
-        color: #7a7872 !important;
-        line-height: 1 !important;
-    }
-    [data-testid="stSidebarCollapseButton"] button:hover::after {
-        color: #6f816e !important;
-    }
-    [data-testid="collapsedControl"] button::after {
-        content: '\25B6' !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    st.markdown("""
     <div style='display:flex;align-items:center;gap:12px;padding:4px 0 14px 0;'>
         <div style='width:42px;height:42px;border-radius:12px;
                     background:linear-gradient(135deg,#6f816e,#936b43);
@@ -450,6 +425,21 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     border: 1px solid {T['border']} !important;
     overflow: hidden !important;
     background-color: {T['card_bg']} !important;
+}}
+
+/* ── FIX: sembunyikan teks Material Icon pada collapse button ── */
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="collapsedControl"] button {{
+    overflow: hidden !important;
+    text-indent: -9999px !important;
+    white-space: nowrap !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
 }}
 
 
