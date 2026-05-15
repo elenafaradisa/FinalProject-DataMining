@@ -28,7 +28,7 @@ st.set_page_config(
     page_title            = "Cost of Living · Data Mining",
     page_icon             = "🌍",
     layout                = "wide",
-    initial_sidebar_state = "auto"   
+    initial_sidebar_state = "expanded"   
 )
 
 # ===========================================================================
@@ -427,19 +427,10 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     background-color: {T['card_bg']} !important;
 }}
 
-/* ── FIX: sembunyikan teks Material Icon pada collapse button ── */
-[data-testid="stSidebarCollapseButton"] button,
-[data-testid="collapsedControl"] button {{
-    overflow: hidden !important;
-    text-indent: -9999px !important;
-    white-space: nowrap !important;
-    width: 2rem !important;
-    height: 2rem !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    cursor: pointer !important;
+/* ── Hide sidebar collapse/expand button sepenuhnya ── */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="collapsedControl"] {{
+    display: none !important;
 }}
 
 
