@@ -28,7 +28,7 @@ st.set_page_config(
     page_title            = "Cost of Living · Data Mining",
     page_icon             = "🌍",
     layout                = "wide",
-    initial_sidebar_state = "expanded"   # FIX: selalu expanded
+    initial_sidebar_state = "auto"   
 )
 
 # ===========================================================================
@@ -120,54 +120,36 @@ html, body, .stApp {{
     color: {T['text']} !important;
 }}
 
-/* Sembunyikan chrome bawaan Streamlit */
-/* Jangan hide header tag — collapsedControl (hamburger) ada di dalamnya */
 #MainMenu {{ display: none !important; }}
 footer {{ display: none !important; }}
 [data-testid="stDecoration"] {{ display: none !important; }}
 [data-testid="stToolbar"] {{ display: none !important; }}
 .stDeployButton {{ display: none !important; }}
 
-/* Header transparan tinggi 0, overflow visible agar hamburger tetap tampil */
-header[data-testid="stHeader"] {{
-    background: transparent !important;
-    height: 0px !important;
-    min-height: 0px !important;
-    overflow: visible !important;
-}}
+/* Hilangkan header Streamlit */
+header[data-testid="stHeader"] {
+    display: none !important;
+}
 
-/* Tombol hamburger — paksa tampil di Streamlit Cloud */
-[data-testid="collapsedControl"] {{
-    display: flex !important;
+/* Hilangkan tombol hamburger */
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
+/* Sidebar permanen */
+section[data-testid="stSidebar"] {
+    display: block !important;
     visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    z-index: 999999 !important;
-    position: fixed !important;
-    top: 12px !important;
-    left: 12px !important;
-    width: 36px !important;
-    height: 36px !important;
-    background-color: {T['card_bg']} !important;
-    border: 1.5px solid {T['border']} !important;
-    border-radius: 10px !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-}}
-[data-testid="collapsedControl"]:hover {{
-    background-color: {T['primary']} !important;
-    border-color: {T['primary']} !important;
-}}
-[data-testid="collapsedControl"] svg {{
-    fill: {T['text']} !important;
-    width: 16px !important;
-    height: 16px !important;
-}}
-[data-testid="collapsedControl"]:hover svg {{
-    fill: #ffffff !important;
-}}
+    transform: translateX(0%) !important;
+    width: 320px !important;
+    min-width: 320px !important;
+    position: relative !important;
+}
+
+/* Fix width internal sidebar */
+section[data-testid="stSidebar"] > div {
+    width: 320px !important;
+}
 
 .block-container {{
     padding: 1.5rem 2rem 2rem 2rem !important;
