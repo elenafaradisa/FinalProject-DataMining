@@ -942,15 +942,11 @@ with tab1:
     """, unsafe_allow_html=True)
 
 
-# ═══════════════════════════════════════════
-# TAB 2: PREPROCESSING
-# FIX #4: Sederhanakan — pipeline flow + KPI cards + tabel ringkas
-# Detail teknis dipindah ke expander tersembunyi
-# ═══════════════════════════════════════════
+# PREPROCESSING
 with tab_prep:
     st.markdown("""
     <div class='page-header'>
-        <span class='page-title'>🛠️ Preprocessing Pipeline</span>
+        <span class='page-title'>🔎 Data Exploration</span>
         <span class='page-sub'>Cleaning · Imputation · Aggregation · Feature Engineering</span>
     </div>""", unsafe_allow_html=True)
 
@@ -1171,14 +1167,7 @@ with tab_prep:
                 pl(fa, 300); fa.update_layout(showlegend=False, margin=dict(t=10, b=10))
                 st.plotly_chart(fa, use_container_width=True, config={"displayModeBar": False})
 
-
-# ═══════════════════════════════════════════
-# TAB 3: ANALYSIS
-# FIX #5: Hapus semua konten duplikat (MI, Variance, Normalisasi sudah ada di Preprocessing)
-# Fokus: distribusi, korelasi, scatter kuadran, top-N ranking
-# FIX #6: Scatter + quadrant lines
-# ═══════════════════════════════════════════
-with tab2:
+# ANALYSIS
     st.markdown("""
     <div class='page-header'>
         <span class='page-title'>🔍 Statistical Analysis</span>
@@ -1322,29 +1311,7 @@ with tab2:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<div class='section-title'>Top 15 Negara by Recommendation Score</div>",
-                unsafe_allow_html=True)
-    top15   = country_data.nlargest(15, "Recommendation_Score").sort_values("Recommendation_Score")
-    fig_top = px.bar(top15, x="Recommendation_Score", y="country", orientation="h",
-                     color="Recommendation_Score", color_continuous_scale=CSCALE,
-                     labels={"Recommendation_Score":"Recommendation Score","country":"Country"})
-    pl(fig_top, 450)
-    fig_top.update_layout(
-        showlegend=False,
-        xaxis=dict(title=dict(text="Recommendation Score", font=dict(color=T["muted"]))),
-        yaxis=dict(title=dict(text="Country",              font=dict(color=T["muted"]))),
-        coloraxis_colorbar=dict(title=dict(font=dict(color=T["muted"])), tickfont=dict(color=T["muted"]))
-    )
-    st.plotly_chart(fig_top, use_container_width=True, config={"displayModeBar": False})
-
-
-# ═══════════════════════════════════════════
 # TAB 4: CLUSTERING
-# FIX #10: Default K=4 (sudah diset di sidebar)
-# FIX #11: Prefix Cx: sudah diimplementasi di get_cluster_label
-# FIX #1: Radio button adaptive → via CSS global
-# ═══════════════════════════════════════════
-with tab3:
     st.markdown("""
     <div class='page-header'>
         <span class='page-title'>🤖 K-Means Clustering</span>
@@ -1363,23 +1330,27 @@ with tab3:
     ce, cs = st.columns(2)
 
     with ce:
-        st.markdown("<div class='section-title'>Elbow Method</div>", unsafe_allow_html=True)
-        ks, inertias = compute_elbow(feature_scaled)
-        fe = go.Figure()
-        fe.add_trace(go.Scatter(
-            x=ks, y=inertias, mode="lines+markers",
-            line=dict(color=T["primary"], width=2.5),
-            marker=dict(size=9, color=T["card_bg"], line=dict(color=T["primary"], width=2.5))
-        ))
-        fe.add_vline(x=k_clusters, line_dash="dash", line_color=T["accent"],
-                     annotation_text=f"K = {k_clusters}",
-                     annotation_font_color=T["accent"], annotation_font_size=12)
-        pl(fe, 340)
-        fe.update_layout(
-            xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
-            yaxis=dict(title=dict(text="Inertia (WSS)", font=dict(color=T["muted"]))),
-        )
-        st.plotly_chart(fe, use_container_width=True, config={"displayModeBar": False})
+            st.markdown("<div class='section-title'>Elbow Method</div>", unsafe_allow_html=True)
+            st.markdown("""<div class='info-box'>WSS makin kecil = cluster makin padat.
+            Pilih K di titik "siku" kurva.</div>""", unsafe_allow_html=True)
+
+            ks, inertias = compute_elbow(feature_scaled)
+            fe = go.Figure()
+            fe.add_trace(go.Scatter(
+                x=ks, y=inertias, mode="lines+markers",
+                line=dict(color=T["primary"], width=2.5),
+                marker=dict(size=9, color=T["card_bg"], line=dict(color=T["primary"], width=2.5))
+            ))
+            fe.add_vline(x=k_clusters, line_dash="dash", line_color=T["accent"],
+                        annotation_text=f"K = {k_clusters}",
+                        annotation_font_color=T["accent"], annotation_font_size=12)
+            pl(fe, 340)
+            fe.update_layout(
+                xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
+                yaxis=dict(title=dict(text="Inertia — Within-Cluster Sum of Squares", font=dict(color=T["muted"]))),
+                font=dict(color=T["muted"])
+            )
+            st.plotly_chart(fe, use_container_width=True, config={"displayModeBar": False})
 
     with cs:
         st.markdown("<div class='section-title'>Silhouette Score</div>", unsafe_allow_html=True)
@@ -1596,43 +1567,6 @@ with tab4:
                                     tickfont=dict(color=T["muted"]))
         )
         st.plotly_chart(fig_sim, use_container_width=True, config={"displayModeBar": False})
-
-        # Z-Score Heatmap
-        st.markdown("<div class='section-title'>Perbandingan: Referensi vs Top 5 (Z-Score Heatmap)</div>",
-                    unsafe_allow_html=True)
-        st.markdown("""<div class='info-box'>
-        Z-Score memungkinkan perbandingan variabel berbeda skala secara adil.
-        Nilai positif (hijau) = di atas rata-rata, negatif (oranye) = di bawah rata-rata.
-        </div>""", unsafe_allow_html=True)
-
-        all_c     = [user_country] + recs.head(5)["country"].tolist()
-        comp_vars = ["x1","x28","x33","x36","x48","x54","CLI","Recommendation_Score"]
-        comp_lbls = ["Meal","Rent","Groceries","Utilities","Gasoline","Salary","CLI","Score"]
-        comp_df   = (country_data[country_data["country"].isin(all_c)]
-                     [["country"] + comp_vars].set_index("country"))
-        comp_sc   = (comp_df - comp_df.mean()) / (comp_df.std() + 1e-9)
-        comp_sc.columns = comp_lbls
-
-        fh = px.imshow(
-            comp_sc,
-            color_continuous_scale=[[0,T["accent"]],[0.5,T["card_bg"]],[1,T["primary"]]],
-            aspect="auto", text_auto=".2f"
-        )
-        fh.update_layout(
-            height=300,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor ="rgba(0,0,0,0)",
-            font=dict(color=T["text"], family="Sora, sans-serif", size=12),
-            margin=dict(t=10, b=10, l=10, r=10),
-            xaxis=dict(title="Feature", tickfont=dict(size=11, color=T["text"]),
-                       title_font=dict(size=12, color=T["text"])),
-            yaxis=dict(title="Country", tickfont=dict(size=11, color=T["text"]),
-                       title_font=dict(size=12, color=T["text"])),
-            coloraxis_colorbar=dict(tickfont=dict(color=T["text"], size=10))
-        )
-        fh.update_traces(textfont=dict(color=T["text"], size=11))
-        st.plotly_chart(fh, use_container_width=True, config={"displayModeBar": False})
-
 
 # FOOTER
 st.markdown("---")
