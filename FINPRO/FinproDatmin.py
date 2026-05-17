@@ -831,11 +831,9 @@ with st.sidebar:
 
 
 # TABS
-tab1, tab_prep, tab2, tab3, tab4 = st.tabs([
+tab1, tab_prep, tab4 = st.tabs([
     "  📊 Overview  ",
-    "  🛠️ Preprocessing  ",
-    "  🔍 Analysis  ",
-    "  🤖 Clustering  ",
+    "  🔎 Data Exploration  ",
     "  🌍 Recommender  "
 ])
 
