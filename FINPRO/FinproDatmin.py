@@ -46,6 +46,12 @@ LIGHT = {
     "tbl_alt"  : "#f4f2ef",
     "tbl_txt"  : "#0e1011",
     "tbl_muted": "#7a7872",
+    # FIX #1: Radio button adaptive colors
+    "radio_bg"       : "#f4f2ef",
+    "radio_bg_sel"   : "#6f816e",
+    "radio_txt"      : "#0e1011",
+    "radio_txt_sel"  : "#ffffff",
+    "radio_border"   : "#e0dbd4",
 }
 DARK = {
     "app_bg"   : "#141618",
@@ -66,9 +72,15 @@ DARK = {
     "tbl_alt"  : "#232729",
     "tbl_txt"  : "#e4e1da",
     "tbl_muted": "#888680",
+    # FIX #1: Radio button adaptive colors
+    "radio_bg"       : "#272b2d",
+    "radio_bg_sel"   : "#7c9179",
+    "radio_txt"      : "#e4e1da",
+    "radio_txt_sel"  : "#ffffff",
+    "radio_border"   : "#2c3033",
 }
 
-# SIDEBAR 
+# SIDEBAR
 with st.sidebar:
     st.markdown("""
     <div style='display:flex;align-items:center;gap:12px;padding:4px 0 14px 0;'>
@@ -174,7 +186,6 @@ section[data-testid="stSidebar"] .stSlider [role="slider"] {{
     border: 2px solid {T['card_bg']} !important;
     box-shadow: 0 0 0 2.5px {T['primary']} !important;
 }}
-
 section[data-testid="stSidebar"] .stSlider span,
 section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMin"],
 section[data-testid="stSidebar"] .stSlider [data-testid="stTickBarMax"],
@@ -197,25 +208,6 @@ section[data-testid="stSidebar"] .stNumberInput button {{
     color: {T['text']} !important;
     border: none !important;
     border-left: 1px solid {T['border']} !important;
-}}
-
-section[data-testid="stSidebar"] .stButton > button {{
-    background: linear-gradient(135deg, {T['primary']}, {T['accent']}) !important;
-    color: #ffffff !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    padding: 10px 18px !important;
-    width: 100% !important;
-    letter-spacing: 0.03em !important;
-    box-shadow: 0 3px 12px {T['primary']}55 !important;
-    transition: all 0.18s ease !important;
-    font-family: 'Sora', sans-serif !important;
-}}
-section[data-testid="stSidebar"] .stButton > button:hover {{
-    opacity: 0.88 !important;
-    transform: translateY(-1px) !important;
 }}
 
 [data-baseweb="toggle"] {{
@@ -380,6 +372,99 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
     overflow: hidden !important;
     background-color: {T['card_bg']} !important;
 }}
+
+/* =====================================================
+   FIX #1: Adaptive radio button cluster filter
+   Targets all stRadio contexts (horizontal & vertical)
+   ===================================================== */
+div[data-testid="stRadio"] > label {{
+    color: {T['text']} !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+}}
+
+/* Radio option labels */
+div[data-testid="stRadio"] div[role="radiogroup"] label {{
+    background-color: {T['radio_bg']} !important;
+    color: {T['radio_txt']} !important;
+    border: 1px solid {T['radio_border']} !important;
+    border-radius: 8px !important;
+    padding: 5px 14px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    font-family: 'Sora', sans-serif !important;
+    margin-right: 4px !important;
+    margin-bottom: 4px !important;
+}}
+
+div[data-testid="stRadio"] div[role="radiogroup"] label:hover {{
+    background-color: {T['primary']}22 !important;
+    border-color: {T['primary']} !important;
+    color: {T['primary']} !important;
+}}
+
+/* Selected radio option */
+div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {{
+    background-color: {T['radio_bg_sel']} !important;
+    color: {T['radio_txt_sel']} !important;
+    border-color: {T['radio_bg_sel']} !important;
+}}
+
+/* Hide native radio circle */
+div[data-testid="stRadio"] div[role="radiogroup"] label input[type="radio"] {{
+    display: none !important;
+}}
+
+/* Force text inside label spans to inherit */
+div[data-testid="stRadio"] div[role="radiogroup"] label p,
+div[data-testid="stRadio"] div[role="radiogroup"] label span,
+div[data-testid="stRadio"] div[role="radiogroup"] label div {{
+    color: inherit !important;
+    font-family: 'Sora', sans-serif !important;
+}}
+
+/* Pipeline flow boxes */
+.pipeline-step {{
+    background: {T['card_bg']};
+    border: 1px solid {T['border']};
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: center;
+    flex: 1;
+}}
+.pipeline-step-title {{
+    font-size: 11px;
+    font-weight: 700;
+    color: {T['primary']};
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
+}}
+.pipeline-step-desc {{
+    font-size: 11.5px;
+    color: {T['muted']};
+    line-height: 1.5;
+}}
+.pipeline-arrow {{
+    display: flex;
+    align-items: center;
+    color: {T['border']};
+    font-size: 20px;
+    padding: 0 4px;
+}}
+
+/* Quadrant labels on scatter */
+.quadrant-label {{
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.55;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -387,14 +472,12 @@ section[data-testid="stSidebar"] .stButton > button:hover {{
 # UTILITY: render HTML table
 def html_table(df: pd.DataFrame, rank_col: bool = False) -> str:
     badge_colors = ["gold", "silver", "bronze"]
-
     headers = "".join(
         f"<th>{'#' if rank_col else ''}{col}</th>"
         if col == df.columns[0] and rank_col
         else f"<th>{col}</th>"
         for col in df.columns
     )
-
     rows_html = ""
     for i, (_, row) in enumerate(df.iterrows()):
         cells = ""
@@ -406,7 +489,6 @@ def html_table(df: pd.DataFrame, rank_col: bool = False) -> str:
             else:
                 cells += f"<td>{val}</td>"
         rows_html += f"<tr>{cells}</tr>"
-
     return f"""
     <div style='overflow-x:auto; margin-bottom:8px;'>
     <table class='custom-table'>
@@ -417,19 +499,16 @@ def html_table(df: pd.DataFrame, rank_col: bool = False) -> str:
     """
 
 
+# PREPROCESSING
 
-# PREPROCESSING 
-
-NUMERIC_COLS = [f"x{i}" for i in range(1, 56)]   
-CLI_COLS     = ["x1", "x48", "x36", "x33"]        # CLI
-CAP_COLS     = ["x48", "x54"]                      # IQR
+NUMERIC_COLS = [f"x{i}" for i in range(1, 56)]
+CLI_COLS     = ["x1", "x48", "x36", "x33"]
+CAP_COLS     = ["x48", "x54"]
 FEATURE_COLS = ["x3", "x8", "x28", "x49", "Recommendation_Score"]
-CLUSTER_COLS = ["x1", "x3", "x8", "x28","x33", "x36", "x48","x49", "x54", "CLI"
-]
+CLUSTER_COLS = ["x1", "x3", "x8", "x28", "x33", "x36", "x48", "x49", "x54", "CLI"]
 
 
 def _validate_dtypes(df: pd.DataFrame) -> pd.DataFrame:
-    """Validasi tipe data."""
     df = df.copy()
     if "city"    in df.columns: df["city"]    = df["city"].astype(str).str.strip()
     if "country" in df.columns: df["country"] = df["country"].astype(str).str.strip()
@@ -440,7 +519,6 @@ def _validate_dtypes(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _handle_duplicates(df: pd.DataFrame) -> pd.DataFrame:
-    """Hapus exact dup, lalu logical dup (city+country), simpan data_quality tertinggi."""
     df = df.drop_duplicates()
     df = df.sort_values("data_quality", ascending=False)
     df = df.drop_duplicates(subset=["city", "country"], keep="first")
@@ -448,7 +526,6 @@ def _handle_duplicates(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _remove_illogical_values(df: pd.DataFrame) -> pd.DataFrame:
-    """Nilai <= 0 pada kolom harga/gaji → NaN."""
     for col in NUMERIC_COLS:
         if col in df.columns:
             df.loc[df[col] <= 0, col] = np.nan
@@ -456,13 +533,13 @@ def _remove_illogical_values(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _smart_impute(df: pd.DataFrame) -> pd.DataFrame:
-    """2-tier imputation: median negara → median global."""
-    numeric_in_df = [c for c in NUMERIC_COLS if c in df.columns]
+    numeric_in_df  = [c for c in NUMERIC_COLS if c in df.columns]
     country_median = df.groupby("country")[numeric_in_df].transform("median")
     df[numeric_in_df] = df[numeric_in_df].fillna(country_median)
-    global_median     = df[numeric_in_df].median()
+    global_median      = df[numeric_in_df].median()
     df[numeric_in_df] = df[numeric_in_df].fillna(global_median)
     return df
+
 
 def _iqr_capping(df: pd.DataFrame) -> pd.DataFrame:
     for col in CAP_COLS:
@@ -471,8 +548,8 @@ def _iqr_capping(df: pd.DataFrame) -> pd.DataFrame:
         df[col] = df[col].clip(upper=Q3 + 1.5*(Q3-Q1))
     return df
 
+
 def clean_city_level(df_raw: pd.DataFrame) -> pd.DataFrame:
-    """STEP 1 — Orkestrasi cleaning level kota."""
     df = df_raw.copy()
     df = _validate_dtypes(df)
     df = _handle_duplicates(df)
@@ -481,255 +558,124 @@ def clean_city_level(df_raw: pd.DataFrame) -> pd.DataFrame:
     df = _iqr_capping(df)
     return df
 
-# STEP 2 — AGGREGATION & FEATURE ENGINEERING
+
 def aggregate_and_engineer(df_clean: pd.DataFrame) -> pd.DataFrame:
-    """
-    Agregasi level kota → negara.
-
-    Strategi:
-    - Prioritaskan data_quality == 1
-    - Jika negara hanya punya data_quality == 0,
-      tetap digunakan sebagai fallback
-    - Semua negara dipertahankan (tidak ada filter jumlah kota)
-
-    Feature Engineering:
-    - CLI (Cost of Living Index)
-    - Recommendation_Score = Salary / CLI
-    """
-
     numeric_cols = [c for c in NUMERIC_COLS if c in df_clean.columns]
-
-    # ── Pisahkan berdasarkan kualitas data ──
     dq1 = df_clean[df_clean["data_quality"] == 1]
     dq0 = df_clean[df_clean["data_quality"] == 0]
-
-    # Negara yang punya data berkualitas tinggi
-    countries_dq1 = set(dq1["country"].unique())
-
-    # Negara fallback (hanya punya dq0)
+    countries_dq1      = set(dq1["country"].unique())
     countries_dq0_only = set(dq0["country"].unique()) - countries_dq1
-
-    # ── Aggregation ──
-    agg_dq1 = (
-        dq1
-        .groupby("country")[numeric_cols]
-        .mean()
-    )
-
-    agg_fallback = (
-        dq0[dq0["country"].isin(countries_dq0_only)]
-        .groupby("country")[numeric_cols]
-        .mean()
-    )
-
-    # Gabungkan semua negara
+    agg_dq1      = dq1.groupby("country")[numeric_cols].mean()
+    agg_fallback = (dq0[dq0["country"].isin(countries_dq0_only)]
+                    .groupby("country")[numeric_cols].mean())
     country_df = pd.concat([agg_dq1, agg_fallback]).reset_index()
-
-    # ── Jumlah kota per negara ──
-    city_counts = (
-        df_clean
-        .groupby("country")["city"]
-        .nunique()
-        .rename("n_cities")
-    )
-
-    country_df = country_df.merge(
-        city_counts.reset_index(),
-        on="country",
-        how="left"
-    )
-    # CLI (Cost of Living Index)
+    city_counts = (df_clean.groupby("country")["city"].nunique().rename("n_cities"))
+    country_df  = country_df.merge(city_counts.reset_index(), on="country", how="left")
     country_df["CLI"] = (
-        0.35 * country_df["x1"]  +   # Meal
-        0.40 * country_df["x48"] +   # Apartment City Centre
-        0.15 * country_df["x36"] +   # Utilities
-        0.10 * country_df["x33"]     # Gasoline
+        0.35 * country_df["x1"]  +
+        0.40 * country_df["x48"] +
+        0.15 * country_df["x36"] +
+        0.10 * country_df["x33"]
     )
-    # Recommendation Score
     country_df["Recommendation_Score"] = np.where(
-        country_df["CLI"] > 0,
-        country_df["x54"] / country_df["CLI"],
-        np.nan
+        country_df["CLI"] > 0, country_df["x54"] / country_df["CLI"], np.nan
     )
-    # Handle missing 
-    country_df["CLI"] = country_df["CLI"].fillna(
-        country_df["CLI"].median()
-    )
-
+    country_df["CLI"] = country_df["CLI"].fillna(country_df["CLI"].median())
     country_df["Recommendation_Score"] = (
         country_df["Recommendation_Score"]
         .fillna(country_df["Recommendation_Score"].median())
     )
-
     return country_df.reset_index(drop=True)
 
-# STEP 3 — FEATURE SELECTION & SCALING
+
 def select_features(country_df: pd.DataFrame):
-    """
-    Seleksi fitur berbasis domain knowledge
-    untuk Content-Based Recommendation.
-
-    Fitur dipilih agar:
-    - tidak overlap langsung dengan komponen CLI
-    - tetap merepresentasikan biaya hidup & kualitas ekonomi
-
-    Cosine Similarity  → MinMaxScaler
-    KMeans Clustering  → StandardScaler
-    """
-
-    feature_cols = [
-        "x3",   # McMeal
-        "x8",   # Water
-        "x28",  # Transport
-        "x49",  # Apartment Outside Centre
-        "Recommendation_Score"
-    ]
-
+    feature_cols = ["x3", "x8", "x28", "x49", "Recommendation_Score"]
     missing = [c for c in feature_cols if c not in country_df.columns]
-
     if missing:
         raise ValueError(f"Kolom tidak ditemukan: {missing}")
-
-    # Feature Matrix
-    df_features = country_df[["country"] + feature_cols].copy()
-
-    # Handle missing
-    df_features[feature_cols] = (
-        df_features[feature_cols]
-        .fillna(df_features[feature_cols].median())
+    df_features   = country_df[["country"] + feature_cols].copy()
+    df_features[feature_cols] = df_features[feature_cols].fillna(
+        df_features[feature_cols].median()
     )
-
-    # MinMaxScaler → Cosine Similarity
     scaler_minmax = MinMaxScaler()
-
-    feat_minmax = scaler_minmax.fit_transform(
-        df_features[feature_cols]
-    )
-
-    df_feat_minmax = pd.DataFrame(
-        feat_minmax,
-        columns=feature_cols,
-        index=df_features["country"]
-    )
-
-    # StandardScaler → KMeans
+    feat_minmax   = scaler_minmax.fit_transform(df_features[feature_cols])
+    df_feat_minmax = pd.DataFrame(feat_minmax, columns=feature_cols,
+                                  index=df_features["country"])
     scaler_std = StandardScaler()
-
-    feat_std = scaler_std.fit_transform(
-        df_features[feature_cols]
-    )
-
-    df_feat_std = pd.DataFrame(
-        feat_std,
-        columns=feature_cols,
-        index=df_features["country"]
-    )
-
+    feat_std   = scaler_std.fit_transform(df_features[feature_cols])
+    df_feat_std = pd.DataFrame(feat_std, columns=feature_cols,
+                               index=df_features["country"])
     return {
-        "df_features"     : df_features,
-        "df_feat_minmax"  : df_feat_minmax,
-        "df_feat_std"     : df_feat_std,
-        "scaler_minmax"   : scaler_minmax,
-        "scaler_std"      : scaler_std,
-        "feature_cols"    : feature_cols
+        "df_features"   : df_features,
+        "df_feat_minmax": df_feat_minmax,
+        "df_feat_std"   : df_feat_std,
+        "scaler_minmax" : scaler_minmax,
+        "scaler_std"    : scaler_std,
+        "feature_cols"  : feature_cols,
     }
+
 
 @st.cache_data
 def run_preprocessing_pipeline(filepath: str) -> dict:
-    """
-    Pipeline end-to-end:
-      STEP 1 → cleaning level kota
-      STEP 2 → agregasi & feature engineering level negara
-      STEP 3 → feature selection + scaling
-    """
-    # LOAD RAW DATA
-    df_raw = pd.read_csv(filepath)
-
-    # STEP 1 — CLEANING
-    df_clean = clean_city_level(df_raw)
-    # STEP 2 — AGGREGATION
-    country_df = aggregate_and_engineer(df_clean)
-    # STEP 3 — FEATURE SELECTION
-    feat_results = select_features(country_df)
-
+    df_raw        = pd.read_csv(filepath)
+    df_clean      = clean_city_level(df_raw)
+    country_df    = aggregate_and_engineer(df_clean)
+    feat_results  = select_features(country_df)
     df_feat        = feat_results["df_features"]
     df_feat_scaled = feat_results["df_feat_minmax"]
     scaler_mm      = feat_results["scaler_minmax"]
-
-    # PIPELINE STATS
     stats = {
-        "n_raw"           : len(df_raw),
-        "n_after_clean"   : len(df_clean),
-        "n_exact_dup"     : len(df_raw) - len(df_raw.drop_duplicates()),
-        "n_country_raw"   : int(df_raw["country"].nunique()),
-        "n_country_final" : len(country_df),
-        "city_counts"     : df_clean.groupby("country")["city"].nunique(),
+        "n_raw"          : len(df_raw),
+        "n_after_clean"  : len(df_clean),
+        "n_exact_dup"    : len(df_raw) - len(df_raw.drop_duplicates()),
+        "n_country_raw"  : int(df_raw["country"].nunique()),
+        "n_country_final": len(country_df),
+        "city_counts"    : df_clean.groupby("country")["city"].nunique(),
     }
-
     return {
-        "df_raw"             : df_raw,
-        "df_clean"           : df_clean,
-        "country_df"         : country_df,
-        "df_features"        : df_feat,
-        "df_features_scaled" : df_feat_scaled,
-        "scaler_mm"          : scaler_mm,
-        "stats"              : stats,
+        "df_raw"            : df_raw,
+        "df_clean"          : df_clean,
+        "country_df"        : country_df,
+        "df_features"       : df_feat,
+        "df_features_scaled": df_feat_scaled,
+        "scaler_mm"         : scaler_mm,
+        "stats"             : stats,
     }
 
 
-# LOAD DATA MELALUI PIPELINE
 @st.cache_data
 def load_data():
-
     current_dir = os.path.dirname(os.path.abspath(__file__))
     file_path   = os.path.join(current_dir, "cost-of-living.csv")
-
-    results = run_preprocessing_pipeline(file_path)
-
-    country_df = results["country_df"]
-
-    # K-MEANS CLUSTERING : StandardScaler → clustering lebih stabil
+    results     = run_preprocessing_pipeline(file_path)
+    country_df  = results["country_df"]
     cluster_cols = [
         "x1", "x3", "x8", "x28",
         "x33", "x36", "x48",
         "x49", "x54", "CLI"
     ]
-
     cluster_matrix = country_df[cluster_cols].fillna(
         country_df[cluster_cols].median()
     )
-
-    scaler_std = StandardScaler()
-
+    scaler_std    = StandardScaler()
     feature_scaled = scaler_std.fit_transform(cluster_matrix)
-
-    # CONTENT-BASED RECOMMENDATION : Cosine Similarity → MinMax scaled selected features
     df_feat_scaled = results["df_features_scaled"]
-
-    cosine_sim = cosine_similarity(df_feat_scaled.values)
-
-    cosine_df = pd.DataFrame(
-        cosine_sim,
-        index   = df_feat_scaled.index,
-        columns = df_feat_scaled.index
-    )
-
-    return (
-        country_df,
-        feature_scaled,
-        cluster_cols,
-        cosine_df,
-        results
-    )
+    cosine_sim     = cosine_similarity(df_feat_scaled.values)
+    cosine_df      = pd.DataFrame(cosine_sim,
+                                  index=df_feat_scaled.index,
+                                  columns=df_feat_scaled.index)
+    return (country_df, feature_scaled, cluster_cols, cosine_df, results)
 
 
 country_data, feature_scaled, feature_cols, cosine_sim_matrix, pipeline_results = load_data()
+
 
 # HELPER FUNCTIONS
 @st.cache_data
 def run_kmeans(k, _fs):
     km = KMeans(n_clusters=k, random_state=42, n_init=25)
     return km, km.fit_predict(_fs)
+
 
 @st.cache_data
 def compute_elbow(_fs, max_k=8):
@@ -738,6 +684,7 @@ def compute_elbow(_fs, max_k=8):
         km = KMeans(n_clusters=k, random_state=42, n_init=10)
         km.fit(_fs); inertias.append(km.inertia_)
     return list(range(2, max_k + 1)), inertias
+
 
 @st.cache_data
 def compute_silhouette(_fs, max_k=8):
@@ -748,52 +695,49 @@ def compute_silhouette(_fs, max_k=8):
         scores.append(silhouette_score(_fs, lbl))
     return list(range(2, max_k + 1)), scores
 
+
 @st.cache_data
 def compute_feature_analysis(_country_data):
-    x_cols = [c for c in _country_data.columns if c.startswith("x")]
-    X = _country_data[x_cols]
-    y = _country_data["x54"]
-    mi_scores = mutual_info_regression(X, y, random_state=42)
-    mi_df = pd.DataFrame({
+    x_cols     = [c for c in _country_data.columns if c.startswith("x")]
+    X          = _country_data[x_cols]
+    y          = _country_data["x54"]
+    mi_scores  = mutual_info_regression(X, y, random_state=42)
+    mi_df      = pd.DataFrame({
         "Feature" : x_cols,
         "MI_Score": mi_scores,
         "Variance": X.var().values
     }).sort_values("MI_Score", ascending=False).reset_index(drop=True)
-    selector = VarianceThreshold(threshold=1.0)
+    selector   = VarianceThreshold(threshold=1.0)
     selector.fit(X)
     mi_df["Lolos_VarThreshold"] = selector.get_support()
     return mi_df, mi_df.head(10)["Feature"].tolist()
 
+
 mi_df, top10_features = compute_feature_analysis(country_data)
 
+
 def get_cluster_label(cluster_id: int, clustered_df: pd.DataFrame) -> str:
-    """
-    Label dinamis berdasarkan median CLI & salary tiap cluster.
-    Lebih akurat dari hardcoded dict — K-Means tidak menjamin urutan cluster.
-    """
     if "Cluster_ID" not in clustered_df.columns:
         return f"Cluster {cluster_id + 1}"
-
     profile = clustered_df.groupby("Cluster_ID")[["CLI", "x54"]].median()
-
-    if cluster_id not in profile.index:          # guard: cluster kosong
+    if cluster_id not in profile.index:
         return f"Cluster {cluster_id + 1}"
-
     global_cli    = clustered_df["CLI"].median()
     global_salary = clustered_df["x54"].median()
     row           = profile.loc[cluster_id]
-
     if   row["CLI"] >  global_cli and row["x54"] >  global_salary: label = "High Cost · High Income"
     elif row["CLI"] >  global_cli and row["x54"] <= global_salary:  label = "Expensive · Low Income"
     elif row["CLI"] <= global_cli and row["x54"] >  global_salary:  label = "Affordable · High Income"
-    else:                                                             label = "Affordable Emerging"
-
+    else:                                                            label = "Affordable Emerging"
+    # FIX #11: Prefix C{id+1} always present → label selalu unik
     return f"C{cluster_id + 1}: {label}"
-    
+
+
 def hybrid_recommend(ref, budget, salary, n):
     if ref not in cosine_sim_matrix.index:
         return pd.DataFrame()
-    sim_df = cosine_sim_matrix[ref].drop(ref).sort_values(ascending=False).reset_index()
+    sim_df = (cosine_sim_matrix[ref].drop(ref)
+              .sort_values(ascending=False).reset_index())
     sim_df.columns = ["country", "similarity"]
     filt = country_data[
         (country_data["CLI"] <= budget) & (country_data["x54"] >= salary)
@@ -805,6 +749,7 @@ def hybrid_recommend(ref, budget, salary, n):
     res["Rec. Score"]     = res["Recommendation_Score"].round(2)
     return res[["country", "Similarity (%)", "CLI ($)", "Avg Salary ($)", "Rec. Score"]]
 
+
 def pl(fig, h=400):
     ax_color = T["text"]
     fig.update_layout(
@@ -814,28 +759,20 @@ def pl(fig, h=400):
         font          = dict(color=T["text"], family="Sora, sans-serif", size=12),
         margin        = dict(t=30, b=40, l=10, r=10),
         xaxis = dict(
-            gridcolor   = T["border"],
-            linecolor   = T["border"],
-            showline    = True,
-            linewidth   = 1,
-            zeroline    = False,
-            tickfont    = dict(size=11, color=ax_color, family="Sora, sans-serif"),
-            title_font  = dict(size=12, color=ax_color, family="Sora, sans-serif"),
+            gridcolor  = T["border"], linecolor=T["border"],
+            showline   = True, linewidth=1, zeroline=False,
+            tickfont   = dict(size=11, color=ax_color, family="Sora, sans-serif"),
+            title_font = dict(size=12, color=ax_color, family="Sora, sans-serif"),
         ),
         yaxis = dict(
-            gridcolor   = T["border"],
-            linecolor   = T["border"],
-            showline    = True,
-            linewidth   = 1,
-            zeroline    = False,
-            tickfont    = dict(size=11, color=ax_color, family="Sora, sans-serif"),
-            title_font  = dict(size=12, color=ax_color, family="Sora, sans-serif"),
+            gridcolor  = T["border"], linecolor=T["border"],
+            showline   = True, linewidth=1, zeroline=False,
+            tickfont   = dict(size=11, color=ax_color, family="Sora, sans-serif"),
+            title_font = dict(size=12, color=ax_color, family="Sora, sans-serif"),
         ),
         legend = dict(
-            bgcolor     = T["card_bg"],
-            bordercolor = T["border"],
-            borderwidth = 1,
-            font        = dict(size=11, color=T["text"])
+            bgcolor=T["card_bg"], bordercolor=T["border"], borderwidth=1,
+            font=dict(size=11, color=T["text"])
         )
     )
     fig.update_xaxes(
@@ -848,31 +785,37 @@ def pl(fig, h=400):
     )
     return fig
 
+
 CSCALE = [[0, T["pink_lt"]], [0.5, T["primary"]], [1, T["accent"]]]
 CLUSTER_COLORS = [T["primary"], T["accent"], T["second"], "#7a9bb5",
                   "#7A4F5E", "#8A9B7A", "#b08ea0", "#6B7A5E"]
-BOX_COLORS     = [T["primary"], T["accent"], T["second"], "#7a9bb5", T["muted"]]
+BOX_COLORS = [T["primary"], T["accent"], T["second"], "#7a9bb5", T["muted"]]
 
 
-# SIDEBAR 
+# SIDEBAR (filters)
 with st.sidebar:
     user_country = st.selectbox(
         "Negara Referensi",
-        options = sorted(country_data["country"].unique()),
-        index   = list(sorted(country_data["country"].unique())).index("Germany")
-                  if "Germany" in country_data["country"].values else 0
+        options=sorted(country_data["country"].unique()),
+        index=list(sorted(country_data["country"].unique())).index("Germany")
+              if "Germany" in country_data["country"].values else 0
     )
     max_budget = st.slider("Max Monthly Budget (USD)", 200, 5000, 2000, 100)
     min_salary = st.slider("Min Average Salary (USD)", 100, 8000, 1000, 100)
     top_n      = st.number_input("Top-N Negara", min_value=3, max_value=30, value=10)
+
     ks_s, sil_s = compute_silhouette(feature_scaled)
-    default_k   = ks_s[sil_s.index(max(sil_s))]  # otomatis dapat K=2
-    k_clusters  = st.slider("Jumlah Cluster (K)", 2, 8, default_k)
+    # FIX #10: Default K=4 (domain-knowledge), bukan otomatis K=2
+    k_clusters = st.slider("Jumlah Cluster (K)", 2, 8, 4)
 
     st.markdown("<hr style='margin:10px 0 8px 0;'>", unsafe_allow_html=True)
-    st.button("Run Analysis", use_container_width=True)
-    st.markdown("<hr style='margin:10px 0 8px 0;'>", unsafe_allow_html=True)
 
+    # FIX #9: Hapus "Run Analysis" button yang tidak berfungsi
+    # Diganti dengan reset filter yang meaningful
+    if st.button("↺ Reset Filter", use_container_width=True):
+        st.rerun()
+
+    st.markdown("<hr style='margin:10px 0 8px 0;'>", unsafe_allow_html=True)
     st.markdown(
         "<span style='font-size:10px;font-weight:700;letter-spacing:0.12em;"
         "opacity:0.5;text-transform:uppercase;'>Metode</span>",
@@ -886,6 +829,7 @@ with st.sidebar:
     <span class='method-pill'>Mutual Info</span>
     </div>""", unsafe_allow_html=True)
 
+
 # TABS
 tab1, tab_prep, tab2, tab3, tab4 = st.tabs([
     "  📊 Overview  ",
@@ -895,7 +839,10 @@ tab1, tab_prep, tab2, tab3, tab4 = st.tabs([
     "  🌍 Recommender  "
 ])
 
+
+# ═══════════════════════════════════════════
 # TAB 1: OVERVIEW
+# ═══════════════════════════════════════════
 with tab1:
     st.markdown("""
     <div class='page-header'>
@@ -908,10 +855,10 @@ with tab1:
 
     col1, col2, col3, col4 = st.columns(4)
     cards = [
-        ("Total Negara",       str(len(country_data)),                  "Aktif dalam dataset",  "🌐"),
-        ("Avg CLI",            f"${country_data['CLI'].mean():,.0f}",   "Rata-rata global",      "📊"),
-        ("Avg Monthly Salary", f"${country_data['x54'].mean():,.0f}",  "Across all countries",  "💼"),
-        ("Top Score Country",  top_c,                                   f"Score {top_score:.2f}","🏆"),
+        ("Total Negara",       str(len(country_data)),               "Aktif dalam dataset", "🌐"),
+        ("Avg CLI",            f"${country_data['CLI'].mean():,.0f}", "Rata-rata global",    "📊"),
+        ("Avg Monthly Salary", f"${country_data['x54'].mean():,.0f}","Across all countries","💼"),
+        ("Top Score Country",  top_c,                                 f"Score {top_score:.2f}","🏆"),
     ]
     for col, (name, val, sub, icon) in zip([col1, col2, col3, col4], cards):
         with col:
@@ -951,11 +898,9 @@ with tab1:
                 unsafe_allow_html=True)
     display_df         = country_data[["country","CLI","x54","Recommendation_Score"]].copy()
     display_df.columns = ["Country", "CLI ($)", "Avg Salary ($)", "Rec. Score"]
-    display_df         = (display_df
-                          .round(2)
+    display_df         = (display_df.round(2)
                           .sort_values("Rec. Score", ascending=False)
-                          .head(7)
-                          .reset_index(drop=True))
+                          .head(7).reset_index(drop=True))
     st.markdown(html_table(display_df, rank_col=True), unsafe_allow_html=True)
 
     st.markdown(f"""
@@ -997,48 +942,30 @@ with tab1:
     """, unsafe_allow_html=True)
 
 
+# ═══════════════════════════════════════════
 # TAB 2: PREPROCESSING
+# FIX #4: Sederhanakan — pipeline flow + KPI cards + tabel ringkas
+# Detail teknis dipindah ke expander tersembunyi
+# ═══════════════════════════════════════════
 with tab_prep:
-
-
     st.markdown("""
     <div class='page-header'>
         <span class='page-title'>🛠️ Preprocessing Pipeline</span>
-        <span class='page-sub'>
-            Cleaning · Imputation · Aggregation · Feature Engineering
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+        <span class='page-sub'>Cleaning · Imputation · Aggregation · Feature Engineering</span>
+    </div>""", unsafe_allow_html=True)
 
     pp_stats    = pipeline_results["stats"]
     df_raw_pp   = pipeline_results["df_raw"]
     df_clean_pp = pipeline_results["df_clean"]
 
-    # METRIC CARDS
+    # KPI Cards
     c1, c2, c3, c4 = st.columns(4)
-
     prep_cards = [
-        ("Raw Rows",
-         f"{pp_stats['n_raw']:,}",
-         "Total data mentah",
-         "📂"),
-
-        ("After Cleaning",
-         f"{pp_stats['n_after_clean']:,}",
-         "Setelah cleaning",
-         "🧹"),
-
-        ("Negara Raw",
-         f"{pp_stats['n_country_raw']}",
-         "Sebelum preprocessing",
-         "🌐"),
-
-        ("Negara Final",
-         f"{pp_stats['n_country_final']}",
-         "Setelah preprocessing",
-         "✅"),
+        ("Raw Rows",      f"{pp_stats['n_raw']:,}",         "Total data mentah",     "📂"),
+        ("After Cleaning",f"{pp_stats['n_after_clean']:,}", "Setelah cleaning",       "🧹"),
+        ("Negara Raw",    f"{pp_stats['n_country_raw']}",   "Sebelum preprocessing", "🌐"),
+        ("Negara Final",  f"{pp_stats['n_country_final']}", "Setelah preprocessing", "✅"),
     ]
-
     for col, (name, val, sub, icon) in zip([c1, c2, c3, c4], prep_cards):
         with col:
             st.markdown(f"""
@@ -1049,227 +976,117 @@ with tab_prep:
                 </div>
                 <div class='metric-value'>{val}</div>
                 <div class='metric-trend'>&#8599; {sub}</div>
-            </div>
-            """, unsafe_allow_html=True)
+            </div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # STEP 1 — CLEANING
-    st.markdown("""
-    <div class='section-title'>
-        STEP 1 — Cleaning Level Kota
+    # Pipeline Flow Diagram
+    st.markdown("<div class='section-title'>Alur Pipeline</div>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style='display:flex; align-items:stretch; gap:6px; margin-bottom:20px; flex-wrap:wrap;'>
+        <div class='pipeline-step'>
+            <div class='pipeline-step-title'>📂 Raw Data</div>
+            <div class='pipeline-step-desc'>{pp_stats['n_raw']:,} baris<br>CSV kota-level</div>
+        </div>
+        <div class='pipeline-arrow'>→</div>
+        <div class='pipeline-step' style='border-top:3px solid {T["primary"]};'>
+            <div class='pipeline-step-title'>🧹 Clean</div>
+            <div class='pipeline-step-desc'>Dedup · Impute<br>IQR Capping</div>
+        </div>
+        <div class='pipeline-arrow'>→</div>
+        <div class='pipeline-step' style='border-top:3px solid {T["accent"]};'>
+            <div class='pipeline-step-title'>🏙️ Aggregate</div>
+            <div class='pipeline-step-desc'>Kota → Negara<br>Mean per country</div>
+        </div>
+        <div class='pipeline-arrow'>→</div>
+        <div class='pipeline-step' style='border-top:3px solid {T["second"]};'>
+            <div class='pipeline-step-title'>⚙️ Engineer</div>
+            <div class='pipeline-step-desc'>CLI · Rec. Score<br>Feature derivation</div>
+        </div>
+        <div class='pipeline-arrow'>→</div>
+        <div class='pipeline-step' style='border-top:3px solid {T["primary"]};'>
+            <div class='pipeline-step-title'>📐 Scale</div>
+            <div class='pipeline-step-desc'>MinMax → Cosine<br>StdScaler → KMeans</div>
+        </div>
+        <div class='pipeline-arrow'>→</div>
+        <div class='pipeline-step' style='border-top:3px solid {T["accent"]};'>
+            <div class='pipeline-step-title'>🤖 Model</div>
+            <div class='pipeline-step-desc'>{pp_stats['n_country_final']} negara<br>Ready for analysis</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    s1a, s1b = st.columns(2)
+    # Ringkasan Pipeline Stats
+    st.markdown("<div class='section-title'>Ringkasan Pipeline</div>", unsafe_allow_html=True)
+    n_cleaned = pp_stats['n_raw'] - pp_stats['n_after_clean']
+    pipeline_summary = pd.DataFrame({
+        "Tahap"      : ["Raw data", "Exact duplicates removed", "Logical duplicates (city+country)",
+                        "Rows setelah cleaning", "Negara raw", "Negara final"],
+        "Nilai"      : [f"{pp_stats['n_raw']:,}", f"{pp_stats['n_exact_dup']:,}",
+                        f"{n_cleaned - pp_stats['n_exact_dup']:,}",
+                        f"{pp_stats['n_after_clean']:,}",
+                        f"{pp_stats['n_country_raw']}", f"{pp_stats['n_country_final']}"],
+        "Keterangan" : ["Input", "Duplikat identik dihapus", "Kota sama per negara, simpan data_quality tertinggi",
+                        "Setelah semua cleaning steps", "Sebelum agregasi", "Setelah agregasi negara"],
+    })
+    st.markdown(html_table(pipeline_summary), unsafe_allow_html=True)
 
-    with s1a:
-        n_cleaned = pp_stats['n_raw'] - pp_stats['n_after_clean']
-        n_exact   = pp_stats['n_exact_dup']
-        n_logical = n_cleaned - n_exact  # estimasi logical dup
+    # FIX #4: Detail teknis tersembunyi dalam expander
+    with st.expander("🔬 Detail Teknis — untuk Data Scientist"):
+        st.markdown("<div class='section-title'>Missing Value Comparison</div>", unsafe_allow_html=True)
+        sample_cols = ["x1","x3","x8","x28","x33","x36","x48","x49","x54"]
+        null_raw    = df_raw_pp[sample_cols].isnull().sum()
+        null_clean  = df_clean_pp[sample_cols].isnull().sum()
+        null_df = pd.DataFrame({
+            "Kolom"    : sample_cols,
+            "NaN Raw"  : null_raw.values,
+            "NaN Clean": null_clean.values,
+            "Berkurang": (null_raw - null_clean).values
+        })
+        st.markdown(html_table(null_df), unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div class='info-box'>
+        st.markdown("<div class='section-title'>IQR Capping — x54 Salary</div>", unsafe_allow_html=True)
+        raw_x54   = pd.to_numeric(df_raw_pp["x54"], errors="coerce").dropna()
+        clean_x54 = df_clean_pp["x54"].dropna()
+        fig_iqr = go.Figure()
+        fig_iqr.add_trace(go.Box(y=raw_x54,   name="Raw",     marker_color=T["accent"], boxmean=True))
+        fig_iqr.add_trace(go.Box(y=clean_x54, name="Cleaned", marker_color=T["primary"], boxmean=True))
+        fig_iqr.update_layout(margin=dict(t=10, b=10),
+                               yaxis=dict(title=dict(text="Monthly Salary (USD)",
+                                                     font=dict(color=T["muted"]))))
+        pl(fig_iqr, 300)
+        st.plotly_chart(fig_iqr, use_container_width=True, config={"displayModeBar": False})
 
-        <b>A. Validasi Tipe Data</b><br>
-        &bull; Kolom city dan country distandarisasi ke format string<br>
-        &nbsp;&nbsp; dan dibersihkan dari spasi berlebih.<br>
-        &bull; Kolom numerik x1–x55 dikonversi ke tipe float.<br>
-        &bull; Nilai yang tidak bisa dikonversi otomatis menjadi NaN.
-        <br>
-
-        <b>B. Penanganan Duplikat</b><br>
-        &bull; Exact duplicate baris dihapus.<br>
-        &bull; Logical duplicate (city + country) baris dihapus dengan<br>
-        &nbsp;&nbsp; mempertahankan (data_quality) tertinggi.
-        <br>
-
-        <b>C. Nilai Tidak Logis</b><br>
-        &bull; Nilai &le; 0 pada semua kolom harga/gaji diubah menjadi<br> 
-                    &nbsp;&nbsp;NaN.
-        </div>
-        """, unsafe_allow_html=True)
-
-    with s1b:
-        st.markdown(f"""
-        <div class='info-box'>
-
-        <b>D. Smart Imputation</b><br>
-        &bull; Tier 1 Median per Negara: Mengisi NaN dengan median<br> kota-kota lain
-        &nbsp;&nbsp; kota-kota lain dalam <i>negara yang sama</i>.<br>
-        &bull; Tier 2 Median Global (fallback): Untuk negara dengan<br> hanya 1 kota
-        &nbsp;&nbsp;hanya 1 kota atau semua kota bernilai NaN pada kolom tersebut.
-        <br>
-
-        <b>E. IQR Capping</b><br>
-        &bull; Nilai di atas upper fence di-clip ke upper fence.<br>
-        &bull; Diterapkan pada kolom <b>x28</b> (one way transportation) dan<br>
-        &nbsp;&nbsp; <b>x54</b> (Salary)<br>
-        &bull; <b>Formula:</b> <code>Upper Fence = Q3 + 1.5 &times; IQR</code>
-
-        </div>
-        """, unsafe_allow_html=True)
-
-    mv_col, iqr_col = st.columns(2)
-
-    with mv_col:
-            st.markdown("""
-            <div class='section-title'>Missing Value Comparison</div>
-            """, unsafe_allow_html=True)
-
-            sample_cols = ["x1","x3","x8","x28","x33","x36","x48","x49","x54"]
-            null_raw    = df_raw_pp[sample_cols].isnull().sum()
-            null_clean  = df_clean_pp[sample_cols].isnull().sum()
-
-            null_df = pd.DataFrame({
-                "Kolom"    : sample_cols,
-                "NaN Raw"  : null_raw.values,
-                "NaN Clean": null_clean.values,
-                "Berkurang": (null_raw - null_clean).values
-            })
-
-            st.markdown(html_table(null_df), unsafe_allow_html=True)
-
-    with iqr_col:
-            st.markdown("""
-            <div class='section-title'>IQR Capping — x54 Salary</div>
-            """, unsafe_allow_html=True)
-
-            raw_x54   = pd.to_numeric(df_raw_pp["x54"], errors="coerce").dropna()
-            clean_x54 = df_clean_pp["x54"].dropna()
-
-            fig_iqr = go.Figure()
-            fig_iqr.add_trace(go.Box(
-                y=raw_x54, name="Raw",
-                marker_color=T["accent"], boxmean=True
-            ))
-            fig_iqr.add_trace(go.Box(
-                y=clean_x54, name="Cleaned",
-                marker_color=T["primary"], boxmean=True
-            ))
-            fig_iqr.update_layout(
-                    margin=dict(t=10, b=10),
-                    yaxis=dict(title=dict(text="Monthly Salary (USD)", font=dict(color=T["muted"]))),
-                )
-            pl(fig_iqr, 300)
-            st.plotly_chart(fig_iqr, use_container_width=True, config={"displayModeBar": False})
-
-    # STEP 2 — AGGREGATION & FEATURE ENGINEERING
-    st.markdown("""
-    <div class='section-title'>
-        STEP 2 — Aggregation & Feature Engineering
-    </div>
-    """, unsafe_allow_html=True)
-
-    s2a, s2b = st.columns([1.2, 1])
-
-    with s2a:
-
-        st.markdown(f"""
-        <div class='info-box'>
-
-        <b>Agregasi Level Negara</b><br>
-        Semua kota per negara dirata-rata menjadi satu baris negara.
-        Tidak ada filter minimum kota sehingga seluruh negara tetap dipertahankan.
-        <br>
-
-        <b>CLI (Cost of Living Index)</b><br>
-        CLI merepresentasikan beban biaya hidup harian yang paling signifikan.
-        Dipilih berdasarkan kontribusinya terhadap pengeluaran rutin rumah tangga.
-        
-        <code>
-        CLI = 0.35×x1 + 0.40×x48 + 0.15×x36 + 0.10×x33
-        </code>
-
-        <br>
-
-        <b>Recommendation Score</b><br>
-        Membandingkan gaji dengan biaya hidup di negara tersebut.
-        Semakin tinggi nilainya, semakin baik kemampuan finansial yang bisa diraih.
-
-        <code>
-        Recommendation Score = x54 ÷ CLI
-        </code>
-
-        <br>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with s2b:
-
-        st.markdown("""
-        <div class='section-title'>
-            CLI Component Weights
-        </div>
-        """, unsafe_allow_html=True)
-
+        st.markdown("<div class='section-title'>CLI Component Weights</div>", unsafe_allow_html=True)
         cli_weights = pd.DataFrame({
-            "Komponen": [
-                "x1 — Meal",
-                "x48 — Rent",
-                "x36 — Utilities",
-                "x33 — Gasoline"
-            ],
-            "Bobot": [
-                "35%",
-                "40%",
-                "15%",
-                "10%"
-            ]
+            "Komponen": ["x1 — Meal","x48 — Rent","x36 — Utilities","x33 — Gasoline"],
+            "Bobot"   : ["35%","40%","15%","10%"]
         })
+        st.markdown(html_table(cli_weights), unsafe_allow_html=True)
 
-        st.markdown(
-            html_table(cli_weights),
-            unsafe_allow_html=True
-        )
-
-
-
-    # STEP 3 — FEATURE SELECTION & SCALING
-    st.markdown("""
-    <div class='section-title'>
-        STEP 3 — Feature Selection & Scaling
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""<div class='info-box'>
-        <b>Mutual Information (MI)</b> mengukur informasi setiap fitur terhadap x54 (Salary).
-        <b>Variance Threshold</b> menyaring fitur hampir konstan (threshold = 1.0).
-        </div>""", unsafe_allow_html=True)
-
-    fs_right, fs_left = st.columns([3, 2])
-
-    with fs_left:
-        st.markdown("<div class='section-title'>Ringkasan Feature Selection</div>", unsafe_allow_html=True)
-        summary_data = pd.DataFrame({
-            "Metode"    : ["Total fitur awal", "Lolos Var Threshold", "Fitur Cosine Sim", "Fitur K-Means"],
-            "Jumlah"    : [len(mi_df), int(mi_df["Lolos_VarThreshold"].sum()), 5, 10],
-            "Keterangan": ["x1–x55", "Variance > 1.0", "Anti-multikolinearitas", "10 fitur + CLI"]
-        })
-        st.markdown(html_table(summary_data), unsafe_allow_html=True)
-
-        st.markdown("<div class='section-title'>Variabel Feature Selection</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>Feature Selection — Variabel Model</div>",
+                    unsafe_allow_html=True)
         feat_table = pd.DataFrame({
-            "Kode" : ["x3", "x8", "x28", "x49", "Recommendation_Score"],
-            "Fitur": ["McMeal", "Water (1.5L)", "Transport (Monthly)", "Apartment Outside Centre", "Purchasing Power Index"]
+            "Kode" : ["x3","x8","x28","x49","Recommendation_Score"],
+            "Fitur": ["McMeal","Water (1.5L)","Transport (Monthly)",
+                      "Apartment Outside Centre","Purchasing Power Index"],
+            "Scaler": ["MinMax→Cosine","MinMax→Cosine","MinMax→Cosine",
+                       "MinMax→Cosine","MinMax→Cosine"]
         })
         st.markdown(html_table(feat_table), unsafe_allow_html=True)
 
-    with fs_right:
         mi_tab, var_tab, dist_tab, norm_tab = st.tabs([
             "MI Score", "Variance Analysis", "Feature Distribution", "Normalisasi"
         ])
 
         with mi_tab:
-            st.markdown("<div class='section-title'>MI Score: Semua Fitur vs x54</div>", unsafe_allow_html=True)
-            cosine_feat_set = {"x3", "x8", "x28", "x49"}
+            cosine_feat_set = {"x3","x8","x28","x49"}
             mi_plot = mi_df.copy()
             mi_plot["Warna"] = mi_plot["Feature"].apply(
                 lambda f: T["accent"]  if f in cosine_feat_set
                 else (T["primary"] if f in {"x1","x33","x36","x48","x54","CLI"} else T["border"])
             )
             mi_sorted = mi_plot.sort_values("MI_Score", ascending=True).tail(30)
-
             fig_mi = go.Figure()
             fig_mi.add_trace(go.Bar(
                 x=mi_sorted["MI_Score"], y=mi_sorted["Feature"], orientation="h",
@@ -1282,110 +1099,90 @@ with tab_prep:
             fig_mi.update_layout(
                 xaxis=dict(title=dict(text="Mutual Information Score", font=dict(color=T["muted"]))),
                 yaxis=dict(title=dict(text="Feature",                  font=dict(color=T["muted"]))),
-                showlegend=False,
-                margin=dict(t=10, b=30, l=10, r=60)
+                showlegend=False, margin=dict(t=10, b=30, l=10, r=60)
             )
             st.plotly_chart(fig_mi, use_container_width=True, config={"displayModeBar": False})
 
         with var_tab:
-            st.markdown("<div class='section-title'>Variance Threshold Analysis</div>", unsafe_allow_html=True)
-            fig_var = px.scatter(
-                mi_df, x="Variance", y="MI_Score", text="Feature",
-                color="Lolos_VarThreshold",
-                color_discrete_map={True: T["primary"], False: T["border"]},
-                labels={"Variance": "Variance", "MI_Score": "MI Score",
-                        "Lolos_VarThreshold": "Lolos Threshold"}
-            )
-            fig_var.update_traces(
-                textposition="top center",
-                textfont=dict(size=7, color=T["text"]),
-                marker=dict(size=8, opacity=0.85, line=dict(color=T["card_bg"], width=1))
-            )
-            fig_var.add_vline(
-                x=1.0, line_dash="dash", line_color=T["accent"],
-                annotation_text="Threshold=1.0",
-                annotation_font_color=T["accent"], annotation_font_size=10
-            )
-            pl(fig_var, 400)
-            fig_var.update_layout(
-                showlegend=True,
-                legend=dict(font=dict(size=10, color=T["text"]), title=""),
-                margin=dict(t=10, b=10),
-                xaxis=dict(title=dict(text="Variance",   font=dict(color=T["muted"]))),
-                yaxis=dict(title=dict(text="MI Score",   font=dict(color=T["muted"]))),
-            )
-            st.plotly_chart(fig_var, use_container_width=True, config={"displayModeBar": False})  
+            _, col_var, _ = st.columns([1, 2, 1])
+            with col_var:
+                fig_var = px.scatter(
+                    mi_df, x="Variance", y="MI_Score", text="Feature",
+                    color="Lolos_VarThreshold",
+                    color_discrete_map={True: T["primary"], False: T["border"]},
+                    labels={"Variance":"Variance","MI_Score":"MI Score","Lolos_VarThreshold":"Lolos Threshold"}
+                )
+                fig_var.update_traces(
+                    textposition="top center",
+                    textfont=dict(size=7, color=T["text"]),
+                    marker=dict(size=8, opacity=0.85, line=dict(color=T["card_bg"], width=1))
+                )
+                fig_var.add_vline(x=1.0, line_dash="dash", line_color=T["accent"],
+                                  annotation_text="Threshold=1.0",
+                                  annotation_font_color=T["accent"], annotation_font_size=10)
+                pl(fig_var, 400)
+                fig_var.update_layout(
+                    showlegend=True,
+                    legend=dict(font=dict(size=10, color=T["text"]), title=""),
+                    margin=dict(t=10, b=10),
+                    xaxis=dict(title=dict(text="Variance", font=dict(color=T["muted"]))),
+                    yaxis=dict(title=dict(text="MI Score",  font=dict(color=T["muted"]))),
+                )
+                st.plotly_chart(fig_var, use_container_width=True, config={"displayModeBar": False})
 
         with dist_tab:
-            st.markdown("<div class='section-title'>Feature Distribution After MinMaxScaler </div>",
-                        unsafe_allow_html=True)
-            df_fs = pipeline_results["df_features_scaled"].copy()
-            feat_labels = {
-                "x3": "McMeal", "x8": "Water", "x28": "Transport",
-                "x49": "Apartment", "Recommendation_Score": "Rec.Score"
-            }
-            df_fs_plot = (
-                df_fs.rename(columns=feat_labels)
-                    .melt(var_name="Feature", value_name="Scaled Value")
-            )
-            fig_feat = px.box(
-                df_fs_plot, x="Feature", y="Scaled Value",
-                color="Feature", color_discrete_sequence=BOX_COLORS
-            )
-            pl(fig_feat, 380)
-            fig_feat.update_layout(
-                showlegend=False,
-                margin=dict(t=10, b=10),
-                xaxis=dict(title=dict(text="Feature",            font=dict(color=T["muted"]))),
-                yaxis=dict(title=dict(text="Scaled Value [0–1]", font=dict(color=T["muted"]))),
-            )
-            st.plotly_chart(fig_feat, use_container_width=True, config={"displayModeBar": False})  
+            _, col_dist, _ = st.columns([1, 2, 1])
+            with col_dist:
+                df_fs = pipeline_results["df_features_scaled"].copy()
+                feat_labels = {
+                    "x3":"McMeal","x8":"Water","x28":"Transport",
+                    "x49":"Apartment","Recommendation_Score":"Rec.Score"
+                }
+                df_fs_plot = df_fs.rename(columns=feat_labels).melt(var_name="Feature", value_name="Scaled Value")
+                fig_feat = px.box(df_fs_plot, x="Feature", y="Scaled Value",
+                                  color="Feature", color_discrete_sequence=BOX_COLORS)
+                pl(fig_feat, 380)
+                fig_feat.update_layout(
+                    showlegend=False, margin=dict(t=10, b=10),
+                    xaxis=dict(title=dict(text="Feature",            font=dict(color=T["muted"]))),
+                    yaxis=dict(title=dict(text="Scaled Value [0–1]", font=dict(color=T["muted"]))),
+                )
+                st.plotly_chart(fig_feat, use_container_width=True, config={"displayModeBar": False})
 
         with norm_tab:
-            st.markdown("<div class='section-title'>Sebelum vs Sesudah StandardScaler</div>",
-                        unsafe_allow_html=True)
-            fd   = ["x1", "x28", "x36", "x48", "x54"]
-            fl   = ["Meal", "Rent", "Utilities", "Gasoline", "Salary"]
+            fd   = ["x1","x28","x36","x48","x54"]
+            fl   = ["Meal","Rent","Utilities","Gasoline","Salary"]
             rmlt = country_data[fd].copy()
             rmlt.columns = fl
             rmlt = rmlt.melt(var_name="Feature", value_name="Value")
-
             sarr = StandardScaler().fit_transform(country_data[fd])
             smlt = pd.DataFrame(sarr, columns=fl).melt(var_name="Feature", value_name="Value")
-
             nb, na = st.columns(2)
             with nb:
                 st.markdown("<div class='section-title'>Raw</div>", unsafe_allow_html=True)
                 fb = px.box(rmlt, x="Feature", y="Value", color="Feature",
                             color_discrete_sequence=BOX_COLORS)
-                pl(fb, 300)
-                fb.update_layout(
-                    showlegend=False,
-                    margin=dict(t=10, b=10),
-                    xaxis=dict(title=dict(text="Feature",    font=dict(color=T["muted"]))),
-                    yaxis=dict(title=dict(text="Value (USD)", font=dict(color=T["muted"]))),
-                )
+                pl(fb, 300); fb.update_layout(showlegend=False, margin=dict(t=10, b=10))
                 st.plotly_chart(fb, use_container_width=True, config={"displayModeBar": False})
-
             with na:
                 st.markdown("<div class='section-title'>Z-Score</div>", unsafe_allow_html=True)
                 fa = px.box(smlt, x="Feature", y="Value", color="Feature",
                             color_discrete_sequence=BOX_COLORS)
-                pl(fa, 300)
-                fa.update_layout(
-                    showlegend=False,
-                    margin=dict(t=10, b=10),
-                    xaxis=dict(title=dict(text="Feature", font=dict(color=T["muted"]))),
-                    yaxis=dict(title=dict(text="Z-Score", font=dict(color=T["muted"]))),
-                )
+                pl(fa, 300); fa.update_layout(showlegend=False, margin=dict(t=10, b=10))
                 st.plotly_chart(fa, use_container_width=True, config={"displayModeBar": False})
 
+
+# ═══════════════════════════════════════════
 # TAB 3: ANALYSIS
+# FIX #5: Hapus semua konten duplikat (MI, Variance, Normalisasi sudah ada di Preprocessing)
+# Fokus: distribusi, korelasi, scatter kuadran, top-N ranking
+# FIX #6: Scatter + quadrant lines
+# ═══════════════════════════════════════════
 with tab2:
     st.markdown("""
     <div class='page-header'>
         <span class='page-title'>🔍 Statistical Analysis</span>
-        <span class='page-sub'>Feature Correlation &middot; Distributions &middot; Feature Selection</span>
+        <span class='page-sub'>Distribution &middot; Correlation &middot; Salary vs CLI · Top Ranking</span>
     </div>""", unsafe_allow_html=True)
 
     col_left, col_right = st.columns([2, 1])
@@ -1393,15 +1190,11 @@ with tab2:
     with col_left:
         st.markdown("<div class='section-title'>Correlation Heatmap: Selected Features</div>",
                     unsafe_allow_html=True)
-        st.markdown("""<div class='info-box'>
-        9 fitur terpilih + CLI. Pemilihan berdasarkan relevansi terhadap x54 (Salary).
-        </div>""", unsafe_allow_html=True)
-
         sel_cols   = ["x1","x3","x8","x28","x33","x36","x48","x49","x54","CLI"]
-        sel_labels = ["Meal","McMeal","Water","OneWay Ticket (Transport)","Gasoline","Utilities","Apart 1BD in city centre","Apart 1BD outside city centre","Salary","CLI"]
+        sel_labels = ["Meal","McMeal","Water","Transport","Gasoline",
+                      "Utilities","Apt-Centre","Apt-Outside","Salary","CLI"]
         corr_df    = country_data[sel_cols].copy()
         corr_df.columns = sel_labels
-
         fig_corr, ax = plt.subplots(figsize=(8, 6))
         fig_corr.patch.set_facecolor(T["card_bg"])
         ax.set_facecolor(T["chart_pl"])
@@ -1410,11 +1203,9 @@ with tab2:
                     linewidths=0.4, linecolor=T["border"],
                     annot_kws={"size": 8.5, "color": T["text"]},
                     cbar_kws={"shrink": 0.8})
-        ax.tick_params(axis="both", colors=T["text"], labelsize=9, which="both")
-        for lbl in ax.get_xticklabels():
-            lbl.set_color(T["text"]); lbl.set_alpha(1.0)
-        for lbl in ax.get_yticklabels():
-            lbl.set_color(T["text"]); lbl.set_alpha(1.0)
+        ax.tick_params(axis="both", colors=T["text"], labelsize=9)
+        for lbl in ax.get_xticklabels(): lbl.set_color(T["text"])
+        for lbl in ax.get_yticklabels(): lbl.set_color(T["text"])
         plt.xticks(rotation=45, ha="right", color=T["text"], fontsize=9)
         plt.yticks(color=T["text"], fontsize=9)
         plt.title("Correlation Matrix: Selected Features",
@@ -1432,10 +1223,10 @@ with tab2:
                                color_discrete_sequence=[T["primary"]])
         pl(fig_cli, 230)
         fig_cli.update_layout(
-        xaxis=dict(title=dict(text="Cost of Living Index (USD)", font=dict(color=T["muted"]))),
-        yaxis=dict(title=dict(text="Jumlah Negara",              font=dict(color=T["muted"]))),
-        showlegend=False,margin=dict(t=10, b=10)
-)
+            xaxis=dict(title=dict(text="Cost of Living Index (USD)", font=dict(color=T["muted"]))),
+            yaxis=dict(title=dict(text="Jumlah Negara",              font=dict(color=T["muted"]))),
+            showlegend=False, margin=dict(t=10, b=10)
+        )
         st.plotly_chart(fig_cli, use_container_width=True, config={"displayModeBar": False})
 
         st.markdown("<div class='section-title'>Distribusi Salary</div>", unsafe_allow_html=True)
@@ -1443,32 +1234,93 @@ with tab2:
                                color_discrete_sequence=[T["accent"]])
         pl(fig_sal, 230)
         fig_sal.update_layout(
-            showlegend=False,
-            margin=dict(t=10, b=10),
+            showlegend=False, margin=dict(t=10, b=10),
             xaxis=dict(title=dict(text="Monthly Salary (USD)", font=dict(color=T["muted"]))),
             yaxis=dict(title=dict(text="Jumlah Negara",        font=dict(color=T["muted"]))),
         )
         st.plotly_chart(fig_sal, use_container_width=True, config={"displayModeBar": False})
 
-    # ── Scatter + Top 15 ──
-    st.markdown("<div class='section-title'>Scatter: Monthly Salary vs Cost of Living Index</div>",
+    # FIX #6: Scatter dengan quadrant lines + zona label
+    st.markdown("<div class='section-title'>Scatter: Monthly Salary vs Cost of Living Index — Analisis Kuadran</div>",
                 unsafe_allow_html=True)
+
+    med_cli    = country_data["CLI"].median()
+    med_salary = country_data["x54"].median()
+
     fig_sc = px.scatter(
         country_data, x="CLI", y="x54",
-        size="Recommendation_Score", color="Recommendation_Score", hover_name="country",
+        size="Recommendation_Score", color="Recommendation_Score",
+        hover_name="country",
         color_continuous_scale=CSCALE,
         labels={"CLI":"Cost of Living Index (USD)","x54":"Monthly Salary (USD)",
                 "Recommendation_Score":"Recommendation Score"}
     )
-    pl(fig_sc, 400)
+    # Quadrant lines
+    fig_sc.add_hline(
+        y=med_salary, line_dash="dash", line_color=T["muted"], line_width=1.2,
+        annotation_text=f"Median Salary ${med_salary:,.0f}",
+        annotation_font_color=T["muted"], annotation_font_size=10,
+        annotation_position="top right"
+    )
+    fig_sc.add_vline(
+        x=med_cli, line_dash="dash", line_color=T["muted"], line_width=1.2,
+        annotation_text=f"Median CLI ${med_cli:,.0f}",
+        annotation_font_color=T["muted"], annotation_font_size=10,
+        annotation_position="top right"
+    )
+    # Quadrant annotations
+    x_range = country_data["CLI"].max() - country_data["CLI"].min()
+    y_range = country_data["x54"].max() - country_data["x54"].min()
+    # Plotly tidak support hex 8-digit — gunakan rgba() untuk alpha
+    ann_bg = "rgba(255,255,255,0.80)" if not dark_mode else "rgba(30,33,35,0.80)"
+    quadrant_labels = [
+        (med_cli * 0.35,               med_salary + y_range * 0.12, "🎯 Sweet Spot", T["primary"]),
+        (med_cli + x_range * 0.22,     med_salary + y_range * 0.12, "💰 Premium",    T["accent"]),
+        (med_cli * 0.35,               med_salary - y_range * 0.12, "💸 Budget",     T["second"]),
+        (med_cli + x_range * 0.22,     med_salary - y_range * 0.12, "⚠️ Trap",      "#c0392b"),
+    ]
+    for qx, qy, qlabel, qcolor in quadrant_labels:
+        fig_sc.add_annotation(
+            x=qx, y=qy, text=qlabel, showarrow=False,
+            font=dict(size=11, color=qcolor, family="Sora, sans-serif"),
+            bgcolor=ann_bg, bordercolor=qcolor,
+            borderwidth=1, borderpad=5, opacity=0.9
+        )
+    pl(fig_sc, 430)
     fig_sc.update_layout(
         xaxis=dict(title=dict(text="Cost of Living Index (USD)", font=dict(color=T["muted"]))),
         yaxis=dict(title=dict(text="Monthly Salary (USD)",       font=dict(color=T["muted"]))),
         coloraxis_colorbar=dict(
-        title=dict(font=dict(color=T["muted"])),
-        tickfont=dict(color=T["muted"]),
-    ))
+            title=dict(font=dict(color=T["muted"])),
+            tickfont=dict(color=T["muted"])
+        )
+    )
     st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar": False})
+
+    st.markdown(f"""
+    <div style='display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;'>
+        <div style='flex:1;min-width:140px;background:{T["primary"]}15;border:1px solid {T["primary"]}44;
+                    border-radius:10px;padding:10px 14px;'>
+            <b style='color:{T["primary"]};'>🎯 Sweet Spot</b>
+            <span style='font-size:12px;color:{T["muted"]};'> — CLI rendah, gaji tinggi. Negara ideal untuk relokasi.</span>
+        </div>
+        <div style='flex:1;min-width:140px;background:{T["accent"]}15;border:1px solid {T["accent"]}44;
+                    border-radius:10px;padding:10px 14px;'>
+            <b style='color:{T["accent"]};'>💰 Premium</b>
+            <span style='font-size:12px;color:{T["muted"]};'> — CLI tinggi, gaji tinggi. Worth it jika karir mendukung.</span>
+        </div>
+        <div style='flex:1;min-width:140px;background:{T["second"]}22;border:1px solid {T["second"]}55;
+                    border-radius:10px;padding:10px 14px;'>
+            <b style='color:{T["accent"]};'>💸 Budget</b>
+            <span style='font-size:12px;color:{T["muted"]};'> — CLI rendah, gaji rendah. Terjangkau tapi terbatas.</span>
+        </div>
+        <div style='flex:1;min-width:140px;background:#c0392b15;border:1px solid #c0392b44;
+                    border-radius:10px;padding:10px 14px;'>
+            <b style='color:#c0392b;'>⚠️ Trap</b>
+            <span style='font-size:12px;color:{T["muted"]};'> — CLI tinggi, gaji rendah. Hindari untuk relokasi jangka panjang.</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("<div class='section-title'>Top 15 Negara by Recommendation Score</div>",
                 unsafe_allow_html=True)
@@ -1478,17 +1330,20 @@ with tab2:
                      labels={"Recommendation_Score":"Recommendation Score","country":"Country"})
     pl(fig_top, 450)
     fig_top.update_layout(
-    showlegend=False,
-    xaxis=dict(title=dict(text="Recommendation Score", font=dict(color=T["muted"]))),
-    yaxis=dict(title=dict(text="Country",              font=dict(color=T["muted"]))),
-    coloraxis_colorbar=dict(
-        title=dict(font=dict(color=T["muted"])),
-        tickfont=dict(color=T["muted"]),
-    )
+        showlegend=False,
+        xaxis=dict(title=dict(text="Recommendation Score", font=dict(color=T["muted"]))),
+        yaxis=dict(title=dict(text="Country",              font=dict(color=T["muted"]))),
+        coloraxis_colorbar=dict(title=dict(font=dict(color=T["muted"])), tickfont=dict(color=T["muted"]))
     )
     st.plotly_chart(fig_top, use_container_width=True, config={"displayModeBar": False})
 
+
+# ═══════════════════════════════════════════
 # TAB 4: CLUSTERING
+# FIX #10: Default K=4 (sudah diset di sidebar)
+# FIX #11: Prefix Cx: sudah diimplementasi di get_cluster_label
+# FIX #1: Radio button adaptive → via CSS global
+# ═══════════════════════════════════════════
 with tab3:
     st.markdown("""
     <div class='page-header'>
@@ -1496,13 +1351,19 @@ with tab3:
         <span class='page-sub'>Elbow &middot; Silhouette &middot; PCA Visualization</span>
     </div>""", unsafe_allow_html=True)
 
+    # Info K default
+    st.markdown(f"""
+    <div class='info-box' style='border-left:3px solid {T["accent"]};'>
+        <b>Panduan Pemilihan K:</b> Default K=4 direkomendasikan berdasarkan kombinasi
+        domain knowledge (4 kuadran biaya hidup) dan validasi elbow method.
+        Geser slider di sidebar untuk mengeksplorasi konfigurasi lain.
+    </div>
+    """, unsafe_allow_html=True)
+
     ce, cs = st.columns(2)
 
     with ce:
         st.markdown("<div class='section-title'>Elbow Method</div>", unsafe_allow_html=True)
-        st.markdown("""<div class='info-box'>WSS makin kecil = cluster makin padat.
-        Pilih K di titik "siku" kurva.</div>""", unsafe_allow_html=True)
-
         ks, inertias = compute_elbow(feature_scaled)
         fe = go.Figure()
         fe.add_trace(go.Scatter(
@@ -1516,17 +1377,12 @@ with tab3:
         pl(fe, 340)
         fe.update_layout(
             xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
-            yaxis=dict(title=dict(text="Inertia — Within-Cluster Sum of Squares", font=dict(color=T["muted"]))),
-            font=dict(color=T["muted"])
+            yaxis=dict(title=dict(text="Inertia (WSS)", font=dict(color=T["muted"]))),
         )
         st.plotly_chart(fe, use_container_width=True, config={"displayModeBar": False})
 
     with cs:
         st.markdown("<div class='section-title'>Silhouette Score</div>", unsafe_allow_html=True)
-        st.markdown("""<div class='info-box'>Score 0-1. Makin tinggi = pemisahan makin baik.</div>""",
-                    unsafe_allow_html=True)
-
-        # BUG 1 FIXED: hapus compute_silhouette() di sini, pakai ks_s & sil_s dari sidebar
         fs = go.Figure()
         fs.add_trace(go.Bar(
             x=ks_s, y=sil_s,
@@ -1534,7 +1390,6 @@ with tab3:
             marker_line_width=0
         ))
         pl(fs, 340)
-        # BUG 2 FIXED: hilangkan koma ekstra setelah tanda kurung tutup
         fs.update_layout(
             xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
             yaxis=dict(title=dict(text="Silhouette Score (0 - 1)", font=dict(color=T["muted"])))
@@ -1543,8 +1398,6 @@ with tab3:
 
     st.markdown("<div class='section-title'>PCA Cluster Plot — Reduksi Dimensi 10D ke 2D</div>",
                 unsafe_allow_html=True)
-    st.markdown("""<div class='info-box'>PCA merangkum 10 fitur ke 2 komponen utama.
-    Tiap titik = 1 negara, warna = cluster.</div>""", unsafe_allow_html=True)
 
     km_model, cluster_labels = run_kmeans(k_clusters, feature_scaled)
     pca        = PCA(n_components=2, random_state=42)
@@ -1572,75 +1425,75 @@ with tab3:
     fp = px.scatter(
         pca_df, x="PC1", y="PC2", color="Cluster",
         hover_name="country",
-        hover_data={"CLI": True, "Salary": True, "PC1": False, "PC2": False},
+        hover_data={"CLI":True,"Salary":True,"PC1":False,"PC2":False},
         color_discrete_map=color_map,
     )
-    fp.update_traces(
-        marker=dict(size=10, opacity=0.82, line=dict(color=T["card_bg"], width=1))
-    )
+    fp.update_traces(marker=dict(size=10, opacity=0.82, line=dict(color=T["card_bg"], width=1)))
     pl(fp, 500)
-    # BUG 3 FIXED: indentasi fp.update_layout konsisten
     fp.update_layout(
         xaxis=dict(title=dict(text=f"PC1 — {var_exp[0]*100:.1f}% Variance Explained", font=dict(color=T["muted"]))),
         yaxis=dict(title=dict(text=f"PC2 — {var_exp[1]*100:.1f}% Variance Explained", font=dict(color=T["muted"]))),
-        coloraxis_colorbar=dict(
-            title=dict(font=dict(color=T["muted"])),
-            tickfont=dict(color=T["muted"]),
-        )
     )
     st.plotly_chart(fp, use_container_width=True, config={"displayModeBar": False})
 
     sil_now  = silhouette_score(feature_scaled, cluster_labels)
     best_k   = ks_s[sil_s.index(max(sil_s))]
     sil_best = max(sil_s)
-    # BUG 4 FIXED: indentasi sil_msg konsisten
-    sil_msg = (
-        f"— cluster overlap, coba geser K ke <b>{best_k}</b> (score terbaik: {sil_best:.3f})"
+    sil_msg  = (
+        f"— cluster overlap. K={best_k} menghasilkan silhouette tertinggi ({sil_best:.3f}), "
+        "tapi K=4 lebih interpretatif secara domain."
         if sil_now < 0.35
         else "— pemisahan cluster baik ✓"
     )
-
     st.markdown(f"""
     <div class='info-box' style='border-left:3px solid {T["accent"] if sil_now < 0.35 else T["primary"]};'>
-        <b>Kualitas Cluster K={k_clusters}:</b> Silhouette Score = <b>{sil_now:.3f}</b>
-        {sil_msg}
+        <b>Kualitas Cluster K={k_clusters}:</b> Silhouette Score = <b>{sil_now:.3f}</b> {sil_msg}
     </div>
     """, unsafe_allow_html=True)
 
-    # CLUSTER PROFILING
+    # Cluster Profiling
     st.markdown("<div class='section-title'>Cluster Profiling</div>", unsafe_allow_html=True)
     clustered_df = country_data.copy()
     clustered_df["Cluster_ID"] = cluster_labels
-    clustered_df["Cluster"] = [
-        get_cluster_label(c, clustered_df) for c in cluster_labels
-    ]
+    clustered_df["Cluster"] = [get_cluster_label(c, clustered_df) for c in cluster_labels]
 
     profile = clustered_df.groupby("Cluster").agg(
-        N_Negara   = ("country", "count"),
-        Avg_CLI    = ("CLI", lambda x: round(x.mean(), 0)),
-        Avg_Salary = ("x54", lambda x: round(x.mean(), 0)),
+        N_Negara   = ("country","count"),
+        Avg_CLI    = ("CLI",    lambda x: round(x.mean(), 0)),
+        Avg_Salary = ("x54",   lambda x: round(x.mean(), 0)),
         Avg_Score  = ("Recommendation_Score", lambda x: round(x.mean(), 2))
     ).reset_index()
-
     profile.columns = ["Cluster", "N Negara", "Avg CLI ($)", "Avg Salary ($)", "Avg Score"]
     st.markdown(html_table(profile), unsafe_allow_html=True)
 
-    # ANGGOTA CLUSTER
+    # Anggota per Cluster — FIX #1: Radio adaptive via CSS
     st.markdown("<div class='section-title'>Anggota per Cluster</div>", unsafe_allow_html=True)
+    members = clustered_df[["country","Cluster","CLI","x54","Recommendation_Score"]].copy()
+    members.columns = ["Country","Cluster","CLI ($)","Salary ($)","Score"]
+    members = members.round(1).sort_values("Cluster").reset_index(drop=True)
 
-    members = clustered_df[
-        ["country", "Cluster", "CLI", "x54", "Recommendation_Score"]
-    ].copy()
-    members.columns = ["Country", "Cluster", "CLI ($)", "Salary ($)", "Score"]
-    members = (
-        members
-        .round(1)
-        .sort_values("Cluster")
-        .reset_index(drop=True)
+    cluster_options  = ["All"] + sorted(members["Cluster"].unique().tolist())
+    selected_cluster = st.radio(
+        "Filter Cluster:",
+        options=cluster_options,
+        horizontal=True,
+        key="cluster_filter"
     )
-    st.markdown(html_table(members), unsafe_allow_html=True)
 
-# TAB 4: RECOMMENDER
+    filtered_members = (
+        members[members["Cluster"] == selected_cluster].reset_index(drop=True)
+        if selected_cluster != "All"
+        else members
+    )
+    st.markdown(html_table(filtered_members), unsafe_allow_html=True)
+
+
+# ═══════════════════════════════════════════
+# TAB 5: RECOMMENDER
+# FIX #7: Tambah cosine similarity bar chart
+# FIX #8: Selaraskan radar chart dengan fitur model + label eksplisit
+# FIX #12: Info-box dengan bahasa manusiawi
+# ═══════════════════════════════════════════
 with tab4:
     st.markdown("""
     <div class='page-header'>
@@ -1648,29 +1501,39 @@ with tab4:
         <span class='page-sub'>Content-Based Cosine Similarity + Rule-Based Filter</span>
     </div>""", unsafe_allow_html=True)
 
-    st.markdown("""<div class='info-box'>
-    <b>Hybrid Method:</b> Content-Based mencari negara dengan profil biaya hidup paling mirip
-    menggunakan Cosine Similarity pada 5 fitur yang dipilih bebas multikolinearitas
-    (x3 McMeal, x8 Water, x28 Transport, x49 Apt-Outside, Recommendation_Score)
-    dengan MinMaxScaler dari preprocessing STEP 3.
-    Rule-Based menyaring hasil berdasarkan Max Budget dan Min Salary dari sidebar.
-    </div>""", unsafe_allow_html=True)
+    # FIX #12: Bahasa manusiawi, bukan jargon teknis
+    st.markdown(f"""
+    <div class='info-box'>
+        <b>Cara kerja sistem ini:</b> Berdasarkan negara referensi yang kamu pilih,
+        sistem mencari negara lain dengan <i>pola biaya hidup paling mirip</i>,
+        lalu menyaringnya berdasarkan budget maksimal dan target gaji minimum
+        yang kamu atur di sidebar. Makin tinggi Similarity (%), makin mirip profilnya.
+    </div>
+    """, unsafe_allow_html=True)
 
     cr, crec = st.columns([1, 2])
 
     with cr:
-        st.markdown("<div class='section-title'>Profil Negara Referensi</div>",
-                    unsafe_allow_html=True)
+        # FIX #8: Radar menggunakan fitur yang sama dengan model cosine similarity
+        st.markdown(f"""
+        <div class='section-title'>Profil Negara Referensi</div>
+        <div style='font-size:11px;color:{T["muted"]};margin-bottom:10px;'>
+            Dimensi radar = fitur yang digunakan model similarity (bukan profil umum)
+        </div>
+        """, unsafe_allow_html=True)
+
         ref_row = country_data[country_data["country"] == user_country]
         if not ref_row.empty:
-            rvars  = ["x1","x28","x36","x48","x54"]
-            rlbls  = ["Meal","Rent","Utilities","Gasoline","Salary"]
-            vals   = ref_row[rvars].values.flatten()
-            vals_n = (vals - vals.min()) / (vals.max() - vals.min() + 1e-9)
+            # Selaras dengan fitur model: x3, x8, x28, x49, Recommendation_Score
+            radar_vars  = ["x3", "x8", "x28", "x49", "Recommendation_Score"]
+            radar_lbls  = ["McMeal", "Water", "Transport", "Apt-Outside", "Rec.Score"]
+            vals        = ref_row[radar_vars].values.flatten().astype(float)
+            vals_n      = (vals - vals.min()) / (vals.max() - vals.min() + 1e-9)
 
             fig_r = go.Figure()
             fig_r.add_trace(go.Scatterpolar(
-                r=np.append(vals_n, vals_n[0]), theta=rlbls + [rlbls[0]],
+                r=np.append(vals_n, vals_n[0]),
+                theta=radar_lbls + [radar_lbls[0]],
                 fill="toself", name=user_country,
                 fillcolor="rgba(111,129,110,0.18)" if not dark_mode else "rgba(124,145,121,0.22)",
                 line=dict(color=T["primary"], width=2.5)
@@ -1708,31 +1571,38 @@ with tab4:
             st.markdown(html_table(recs.reset_index(drop=True), rank_col=True),
                         unsafe_allow_html=True)
 
-            st.markdown("<div class='section-title'>Cosine Similarity Score</div>",
-                        unsafe_allow_html=True)
-            fig_sim = px.bar(
-                recs.sort_values("Similarity (%)"),
-                x="Similarity (%)", y="country", orientation="h",
-                color="Similarity (%)", color_continuous_scale=CSCALE,
-                labels={"country":"Country","Similarity (%)":"Cosine Similarity (%)"}
-            )
-            pl(fig_sim, 300)
-            fig_sim.update_layout(
-                showlegend=False,
-                xaxis=dict(title=dict(text="Cosine Similarity (%)", font=dict(color=T["muted"]))),
-                yaxis=dict(title=dict(text="Country",               font=dict(color=T["muted"]))),
-                coloraxis_colorbar=dict(
-                    title=dict(font=dict(color=T["muted"])),
-                    tickfont=dict(color=T["muted"]),
-                ),
-            )
-            st.plotly_chart(fig_sim, use_container_width=True, config={"displayModeBar": False})
-
+    # FIX #7: Similarity bar chart — gap antar kandidat jadi jelas
     if not recs.empty:
+        st.markdown("<div class='section-title'>Similarity Score — Perbandingan Kandidat</div>",
+                    unsafe_allow_html=True)
+        sim_sorted = recs.sort_values("Similarity (%)", ascending=True)
+        fig_sim = px.bar(
+            sim_sorted, x="Similarity (%)", y="country", orientation="h",
+            color="Similarity (%)", color_continuous_scale=CSCALE,
+            labels={"Similarity (%)":"Cosine Similarity (%)","country":"Negara"}
+        )
+        fig_sim.update_traces(
+            text=sim_sorted["Similarity (%)"].astype(str) + "%",
+            textposition="outside",
+            textfont=dict(size=11, color=T["text"])
+        )
+        pl(fig_sim, max(280, len(recs) * 36))
+        fig_sim.update_layout(
+            showlegend=False,
+            xaxis=dict(title=dict(text="Cosine Similarity (%)", font=dict(color=T["muted"])),
+                       range=[0, 110]),
+            yaxis=dict(title=dict(text="Negara", font=dict(color=T["muted"]))),
+            coloraxis_colorbar=dict(title=dict(font=dict(color=T["muted"])),
+                                    tickfont=dict(color=T["muted"]))
+        )
+        st.plotly_chart(fig_sim, use_container_width=True, config={"displayModeBar": False})
+
+        # Z-Score Heatmap
         st.markdown("<div class='section-title'>Perbandingan: Referensi vs Top 5 (Z-Score Heatmap)</div>",
                     unsafe_allow_html=True)
         st.markdown("""<div class='info-box'>
-        Z-Score agar perbandingan antar variabel dengan skala berbeda tetap adil.
+        Z-Score memungkinkan perbandingan variabel berbeda skala secara adil.
+        Nilai positif (hijau) = di atas rata-rata, negatif (oranye) = di bawah rata-rata.
         </div>""", unsafe_allow_html=True)
 
         all_c     = [user_country] + recs.head(5)["country"].tolist()
@@ -1754,10 +1624,9 @@ with tab4:
             plot_bgcolor ="rgba(0,0,0,0)",
             font=dict(color=T["text"], family="Sora, sans-serif", size=12),
             margin=dict(t=10, b=10, l=10, r=10),
-            xaxis_title="Feature", yaxis_title="Country",
-            xaxis=dict(tickfont=dict(size=11, color=T["text"]),
+            xaxis=dict(title="Feature", tickfont=dict(size=11, color=T["text"]),
                        title_font=dict(size=12, color=T["text"])),
-            yaxis=dict(tickfont=dict(size=11, color=T["text"]),
+            yaxis=dict(title="Country", tickfont=dict(size=11, color=T["text"]),
                        title_font=dict(size=12, color=T["text"])),
             coloraxis_colorbar=dict(tickfont=dict(color=T["text"], size=10))
         )
@@ -1769,7 +1638,7 @@ with tab4:
 st.markdown("---")
 st.markdown(f"""
 <div style='text-align:center;color:{T['muted']};font-size:12px;
-             padding:10px 0 6px 0;font-family:Sora,sans-serif;'>
+            padding:10px 0 6px 0;font-family:Sora,sans-serif;'>
     Final Project Data Mining &nbsp;&middot;&nbsp; Hybrid Country Recommendation System<br>
     <span style='color:{T['border']};'>
     K-Means &nbsp;&middot;&nbsp; PCA &nbsp;&middot;&nbsp; Cosine Similarity
