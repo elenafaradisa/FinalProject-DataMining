@@ -944,9 +944,13 @@ with tab1:
 with tab_prep:
     st.markdown("""
     <div class='page-header'>
-        <span class='page-title'>🔎 Data Exploration</span>
-        <span class='page-sub'>Cleaning · Imputation · Aggregation · Feature Engineering</span>
+        <span class='page-title'>🔬 Data Exploration</span>
+        <span class='page-sub'>Preprocessing · Statistical Analysis · Clustering</span>
     </div>""", unsafe_allow_html=True)
+
+    with st.expander("🛠️ Preprocessing Pipeline", expanded=True):
+        st.markdown("<div class='section-title'>Preprocessing Pipeline</div>",
+                    unsafe_allow_html=True)
 
     pp_stats    = pipeline_results["stats"]
     df_raw_pp   = pipeline_results["df_raw"]
@@ -1166,11 +1170,9 @@ with tab_prep:
                 st.plotly_chart(fa, use_container_width=True, config={"displayModeBar": False})
 
 # ANALYSIS
-    st.markdown("""
-    <div class='page-header'>
-        <span class='page-title'>🔍 Statistical Analysis</span>
-        <span class='page-sub'>Distribution &middot; Correlation &middot; Salary vs CLI · Top Ranking</span>
-    </div>""", unsafe_allow_html=True)
+    with st.expander("🔍 Statistical Analysis", expanded=False):
+        st.markdown("<div class='section-title'>Statistical Analysis</div>",
+                    unsafe_allow_html=True)
 
     col_left, col_right = st.columns([2, 1])
 
@@ -1310,11 +1312,9 @@ with tab_prep:
     """, unsafe_allow_html=True)
 
 # TAB 4: CLUSTERING
-    st.markdown("""
-    <div class='page-header'>
-        <span class='page-title'>🤖 K-Means Clustering</span>
-        <span class='page-sub'>Elbow &middot; Silhouette &middot; PCA Visualization</span>
-    </div>""", unsafe_allow_html=True)
+    with st.expander("🤖 K-Means Clustering", expanded=False):
+        st.markdown("<div class='section-title'>K-Means Clustering</div>",
+                    unsafe_allow_html=True)
 
     # Info K default
     st.markdown(f"""
