@@ -948,7 +948,7 @@ with tab_prep:
         <span class='page-sub'>Preprocessing · Statistical Analysis · Clustering</span>
     </div>""", unsafe_allow_html=True)
 
-    with st.expander("🛠️ Preprocessing Pipeline", expanded=True)
+    with st.expander("🛠️ Preprocessing Pipeline", expanded=True):
 
         pp_stats    = pipeline_results["stats"]
         df_raw_pp   = pipeline_results["df_raw"]
@@ -1169,290 +1169,286 @@ with tab_prep:
 
 # ANALYSIS
     with st.expander("🔍 Statistical Analysis", expanded=False):
-        st.markdown("<div class='section-title'>Statistical Analysis</div>",
+        col_left, col_right = st.columns([2, 1])
+    
+        with col_left:
+            st.markdown("<div class='section-title'>Correlation Heatmap: Selected Features</div>",
+                        unsafe_allow_html=True)
+            sel_cols   = ["x1","x3","x8","x28","x33","x36","x48","x49","x54","CLI"]
+            sel_labels = ["Meal","McMeal","Water","Transport","Gasoline",
+                          "Utilities","Apt-Centre","Apt-Outside","Salary","CLI"]
+            corr_df    = country_data[sel_cols].copy()
+            corr_df.columns = sel_labels
+            fig_corr, ax = plt.subplots(figsize=(8, 6))
+            fig_corr.patch.set_facecolor(T["card_bg"])
+            ax.set_facecolor(T["chart_pl"])
+            cmap = sns.diverging_palette(140, 30, s=60, l=50, as_cmap=True)
+            sns.heatmap(corr_df.corr(), annot=True, fmt=".2f", cmap=cmap, center=0, ax=ax,
+                        linewidths=0.4, linecolor=T["border"],
+                        annot_kws={"size": 8.5, "color": T["text"]},
+                        cbar_kws={"shrink": 0.8})
+            ax.tick_params(axis="both", colors=T["text"], labelsize=9)
+            for lbl in ax.get_xticklabels(): lbl.set_color(T["text"])
+            for lbl in ax.get_yticklabels(): lbl.set_color(T["text"])
+            plt.xticks(rotation=45, ha="right", color=T["text"], fontsize=9)
+            plt.yticks(color=T["text"], fontsize=9)
+            plt.title("Correlation Matrix: Selected Features",
+                      color=T["text"], pad=12, fontweight="bold", fontsize=11)
+            cbar = ax.collections[0].colorbar
+            if cbar:
+                cbar.ax.tick_params(colors=T["text"], labelsize=8)
+                plt.setp(cbar.ax.yaxis.get_ticklabels(), color=T["text"], alpha=1.0)
+            fig_corr.tight_layout()
+            st.pyplot(fig_corr)
+    
+        with col_right:
+            st.markdown("<div class='section-title'>Distribusi CLI</div>", unsafe_allow_html=True)
+            fig_cli = px.histogram(country_data, x="CLI", nbins=30,
+                                   color_discrete_sequence=[T["primary"]])
+            pl(fig_cli, 230)
+            fig_cli.update_layout(
+                xaxis=dict(title=dict(text="Cost of Living Index (USD)", font=dict(color=T["muted"]))),
+                yaxis=dict(title=dict(text="Jumlah Negara",              font=dict(color=T["muted"]))),
+                showlegend=False, margin=dict(t=10, b=10)
+            )
+            st.plotly_chart(fig_cli, use_container_width=True, config={"displayModeBar": False})
+    
+            st.markdown("<div class='section-title'>Distribusi Salary</div>", unsafe_allow_html=True)
+            fig_sal = px.histogram(country_data, x="x54", nbins=30,
+                                   color_discrete_sequence=[T["accent"]])
+            pl(fig_sal, 230)
+            fig_sal.update_layout(
+                showlegend=False, margin=dict(t=10, b=10),
+                xaxis=dict(title=dict(text="Monthly Salary (USD)", font=dict(color=T["muted"]))),
+                yaxis=dict(title=dict(text="Jumlah Negara",        font=dict(color=T["muted"]))),
+            )
+            st.plotly_chart(fig_sal, use_container_width=True, config={"displayModeBar": False})
+    
+        # FIX #6: Scatter dengan quadrant lines + zona label
+        st.markdown("<div class='section-title'>Scatter: Monthly Salary vs Cost of Living Index — Analisis Kuadran</div>",
                     unsafe_allow_html=True)
-
-    col_left, col_right = st.columns([2, 1])
-
-    with col_left:
-        st.markdown("<div class='section-title'>Correlation Heatmap: Selected Features</div>",
-                    unsafe_allow_html=True)
-        sel_cols   = ["x1","x3","x8","x28","x33","x36","x48","x49","x54","CLI"]
-        sel_labels = ["Meal","McMeal","Water","Transport","Gasoline",
-                      "Utilities","Apt-Centre","Apt-Outside","Salary","CLI"]
-        corr_df    = country_data[sel_cols].copy()
-        corr_df.columns = sel_labels
-        fig_corr, ax = plt.subplots(figsize=(8, 6))
-        fig_corr.patch.set_facecolor(T["card_bg"])
-        ax.set_facecolor(T["chart_pl"])
-        cmap = sns.diverging_palette(140, 30, s=60, l=50, as_cmap=True)
-        sns.heatmap(corr_df.corr(), annot=True, fmt=".2f", cmap=cmap, center=0, ax=ax,
-                    linewidths=0.4, linecolor=T["border"],
-                    annot_kws={"size": 8.5, "color": T["text"]},
-                    cbar_kws={"shrink": 0.8})
-        ax.tick_params(axis="both", colors=T["text"], labelsize=9)
-        for lbl in ax.get_xticklabels(): lbl.set_color(T["text"])
-        for lbl in ax.get_yticklabels(): lbl.set_color(T["text"])
-        plt.xticks(rotation=45, ha="right", color=T["text"], fontsize=9)
-        plt.yticks(color=T["text"], fontsize=9)
-        plt.title("Correlation Matrix: Selected Features",
-                  color=T["text"], pad=12, fontweight="bold", fontsize=11)
-        cbar = ax.collections[0].colorbar
-        if cbar:
-            cbar.ax.tick_params(colors=T["text"], labelsize=8)
-            plt.setp(cbar.ax.yaxis.get_ticklabels(), color=T["text"], alpha=1.0)
-        fig_corr.tight_layout()
-        st.pyplot(fig_corr)
-
-    with col_right:
-        st.markdown("<div class='section-title'>Distribusi CLI</div>", unsafe_allow_html=True)
-        fig_cli = px.histogram(country_data, x="CLI", nbins=30,
-                               color_discrete_sequence=[T["primary"]])
-        pl(fig_cli, 230)
-        fig_cli.update_layout(
+    
+        med_cli    = country_data["CLI"].median()
+        med_salary = country_data["x54"].median()
+    
+        fig_sc = px.scatter(
+            country_data, x="CLI", y="x54",
+            size="Recommendation_Score", color="Recommendation_Score",
+            hover_name="country",
+            color_continuous_scale=CSCALE,
+            labels={"CLI":"Cost of Living Index (USD)","x54":"Monthly Salary (USD)",
+                    "Recommendation_Score":"Recommendation Score"}
+        )
+        # Quadrant lines
+        fig_sc.add_hline(
+            y=med_salary, line_dash="dash", line_color=T["muted"], line_width=1.2,
+            annotation_text=f"Median Salary ${med_salary:,.0f}",
+            annotation_font_color=T["muted"], annotation_font_size=10,
+            annotation_position="top right"
+        )
+        fig_sc.add_vline(
+            x=med_cli, line_dash="dash", line_color=T["muted"], line_width=1.2,
+            annotation_text=f"Median CLI ${med_cli:,.0f}",
+            annotation_font_color=T["muted"], annotation_font_size=10,
+            annotation_position="top right"
+        )
+        # Quadrant annotations
+        x_range = country_data["CLI"].max() - country_data["CLI"].min()
+        y_range = country_data["x54"].max() - country_data["x54"].min()
+        # Plotly tidak support hex 8-digit — gunakan rgba() untuk alpha
+        ann_bg = "rgba(255,255,255,0.80)" if not dark_mode else "rgba(30,33,35,0.80)"
+        quadrant_labels = [
+            (med_cli * 0.35,               med_salary + y_range * 0.12, "🎯 Sweet Spot", T["primary"]),
+            (med_cli + x_range * 0.22,     med_salary + y_range * 0.12, "💰 Premium",    T["accent"]),
+            (med_cli * 0.35,               med_salary - y_range * 0.12, "💸 Budget",     T["second"]),
+            (med_cli + x_range * 0.22,     med_salary - y_range * 0.12, "⚠️ Trap",      "#c0392b"),
+        ]
+        for qx, qy, qlabel, qcolor in quadrant_labels:
+            fig_sc.add_annotation(
+                x=qx, y=qy, text=qlabel, showarrow=False,
+                font=dict(size=11, color=qcolor, family="Sora, sans-serif"),
+                bgcolor=ann_bg, bordercolor=qcolor,
+                borderwidth=1, borderpad=5, opacity=0.9
+            )
+        pl(fig_sc, 430)
+        fig_sc.update_layout(
             xaxis=dict(title=dict(text="Cost of Living Index (USD)", font=dict(color=T["muted"]))),
-            yaxis=dict(title=dict(text="Jumlah Negara",              font=dict(color=T["muted"]))),
-            showlegend=False, margin=dict(t=10, b=10)
+            yaxis=dict(title=dict(text="Monthly Salary (USD)",       font=dict(color=T["muted"]))),
+            coloraxis_colorbar=dict(
+                title=dict(font=dict(color=T["muted"])),
+                tickfont=dict(color=T["muted"])
+            )
         )
-        st.plotly_chart(fig_cli, use_container_width=True, config={"displayModeBar": False})
-
-        st.markdown("<div class='section-title'>Distribusi Salary</div>", unsafe_allow_html=True)
-        fig_sal = px.histogram(country_data, x="x54", nbins=30,
-                               color_discrete_sequence=[T["accent"]])
-        pl(fig_sal, 230)
-        fig_sal.update_layout(
-            showlegend=False, margin=dict(t=10, b=10),
-            xaxis=dict(title=dict(text="Monthly Salary (USD)", font=dict(color=T["muted"]))),
-            yaxis=dict(title=dict(text="Jumlah Negara",        font=dict(color=T["muted"]))),
-        )
-        st.plotly_chart(fig_sal, use_container_width=True, config={"displayModeBar": False})
-
-    # FIX #6: Scatter dengan quadrant lines + zona label
-    st.markdown("<div class='section-title'>Scatter: Monthly Salary vs Cost of Living Index — Analisis Kuadran</div>",
-                unsafe_allow_html=True)
-
-    med_cli    = country_data["CLI"].median()
-    med_salary = country_data["x54"].median()
-
-    fig_sc = px.scatter(
-        country_data, x="CLI", y="x54",
-        size="Recommendation_Score", color="Recommendation_Score",
-        hover_name="country",
-        color_continuous_scale=CSCALE,
-        labels={"CLI":"Cost of Living Index (USD)","x54":"Monthly Salary (USD)",
-                "Recommendation_Score":"Recommendation Score"}
-    )
-    # Quadrant lines
-    fig_sc.add_hline(
-        y=med_salary, line_dash="dash", line_color=T["muted"], line_width=1.2,
-        annotation_text=f"Median Salary ${med_salary:,.0f}",
-        annotation_font_color=T["muted"], annotation_font_size=10,
-        annotation_position="top right"
-    )
-    fig_sc.add_vline(
-        x=med_cli, line_dash="dash", line_color=T["muted"], line_width=1.2,
-        annotation_text=f"Median CLI ${med_cli:,.0f}",
-        annotation_font_color=T["muted"], annotation_font_size=10,
-        annotation_position="top right"
-    )
-    # Quadrant annotations
-    x_range = country_data["CLI"].max() - country_data["CLI"].min()
-    y_range = country_data["x54"].max() - country_data["x54"].min()
-    # Plotly tidak support hex 8-digit — gunakan rgba() untuk alpha
-    ann_bg = "rgba(255,255,255,0.80)" if not dark_mode else "rgba(30,33,35,0.80)"
-    quadrant_labels = [
-        (med_cli * 0.35,               med_salary + y_range * 0.12, "🎯 Sweet Spot", T["primary"]),
-        (med_cli + x_range * 0.22,     med_salary + y_range * 0.12, "💰 Premium",    T["accent"]),
-        (med_cli * 0.35,               med_salary - y_range * 0.12, "💸 Budget",     T["second"]),
-        (med_cli + x_range * 0.22,     med_salary - y_range * 0.12, "⚠️ Trap",      "#c0392b"),
-    ]
-    for qx, qy, qlabel, qcolor in quadrant_labels:
-        fig_sc.add_annotation(
-            x=qx, y=qy, text=qlabel, showarrow=False,
-            font=dict(size=11, color=qcolor, family="Sora, sans-serif"),
-            bgcolor=ann_bg, bordercolor=qcolor,
-            borderwidth=1, borderpad=5, opacity=0.9
-        )
-    pl(fig_sc, 430)
-    fig_sc.update_layout(
-        xaxis=dict(title=dict(text="Cost of Living Index (USD)", font=dict(color=T["muted"]))),
-        yaxis=dict(title=dict(text="Monthly Salary (USD)",       font=dict(color=T["muted"]))),
-        coloraxis_colorbar=dict(
-            title=dict(font=dict(color=T["muted"])),
-            tickfont=dict(color=T["muted"])
-        )
-    )
-    st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar": False})
-
-    st.markdown(f"""
-    <div style='display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;'>
-        <div style='flex:1;min-width:140px;background:{T["primary"]}15;border:1px solid {T["primary"]}44;
-                    border-radius:10px;padding:10px 14px;'>
-            <b style='color:{T["primary"]};'>🎯 Sweet Spot</b>
-            <span style='font-size:12px;color:{T["muted"]};'> — CLI rendah, gaji tinggi. Negara ideal untuk relokasi.</span>
+        st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar": False})
+    
+        st.markdown(f"""
+        <div style='display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;'>
+            <div style='flex:1;min-width:140px;background:{T["primary"]}15;border:1px solid {T["primary"]}44;
+                        border-radius:10px;padding:10px 14px;'>
+                <b style='color:{T["primary"]};'>🎯 Sweet Spot</b>
+                <span style='font-size:12px;color:{T["muted"]};'> — CLI rendah, gaji tinggi. Negara ideal untuk relokasi.</span>
+            </div>
+            <div style='flex:1;min-width:140px;background:{T["accent"]}15;border:1px solid {T["accent"]}44;
+                        border-radius:10px;padding:10px 14px;'>
+                <b style='color:{T["accent"]};'>💰 Premium</b>
+                <span style='font-size:12px;color:{T["muted"]};'> — CLI tinggi, gaji tinggi. Worth it jika karir mendukung.</span>
+            </div>
+            <div style='flex:1;min-width:140px;background:{T["second"]}22;border:1px solid {T["second"]}55;
+                        border-radius:10px;padding:10px 14px;'>
+                <b style='color:{T["accent"]};'>💸 Budget</b>
+                <span style='font-size:12px;color:{T["muted"]};'> — CLI rendah, gaji rendah. Terjangkau tapi terbatas.</span>
+            </div>
+            <div style='flex:1;min-width:140px;background:#c0392b15;border:1px solid #c0392b44;
+                        border-radius:10px;padding:10px 14px;'>
+                <b style='color:#c0392b;'>⚠️ Trap</b>
+                <span style='font-size:12px;color:{T["muted"]};'> — CLI tinggi, gaji rendah. Hindari untuk relokasi jangka panjang.</span>
+            </div>
         </div>
-        <div style='flex:1;min-width:140px;background:{T["accent"]}15;border:1px solid {T["accent"]}44;
-                    border-radius:10px;padding:10px 14px;'>
-            <b style='color:{T["accent"]};'>💰 Premium</b>
-            <span style='font-size:12px;color:{T["muted"]};'> — CLI tinggi, gaji tinggi. Worth it jika karir mendukung.</span>
-        </div>
-        <div style='flex:1;min-width:140px;background:{T["second"]}22;border:1px solid {T["second"]}55;
-                    border-radius:10px;padding:10px 14px;'>
-            <b style='color:{T["accent"]};'>💸 Budget</b>
-            <span style='font-size:12px;color:{T["muted"]};'> — CLI rendah, gaji rendah. Terjangkau tapi terbatas.</span>
-        </div>
-        <div style='flex:1;min-width:140px;background:#c0392b15;border:1px solid #c0392b44;
-                    border-radius:10px;padding:10px 14px;'>
-            <b style='color:#c0392b;'>⚠️ Trap</b>
-            <span style='font-size:12px;color:{T["muted"]};'> — CLI tinggi, gaji rendah. Hindari untuk relokasi jangka panjang.</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
 # TAB 4: CLUSTERING
     with st.expander("🤖 K-Means Clustering", expanded=False):
-        st.markdown("<div class='section-title'>K-Means Clustering</div>",
-                    unsafe_allow_html=True)
+    
 
-    # Info K default
-    st.markdown(f"""
-    <div class='info-box' style='border-left:3px solid {T["accent"]};'>
-        <b>Panduan Pemilihan K:</b> Default K=4 direkomendasikan berdasarkan kombinasi
-        domain knowledge (4 kuadran biaya hidup) dan validasi elbow method.
-        Geser slider di sidebar untuk mengeksplorasi konfigurasi lain.
-    </div>
-    """, unsafe_allow_html=True)
-
-    ce, cs = st.columns(2)
-
-    with ce:
-            st.markdown("<div class='section-title'>Elbow Method</div>", unsafe_allow_html=True)
-            st.markdown("""<div class='info-box'>WSS makin kecil = cluster makin padat.
-            Pilih K di titik "siku" kurva.</div>""", unsafe_allow_html=True)
-
-            ks, inertias = compute_elbow(feature_scaled)
-            fe = go.Figure()
-            fe.add_trace(go.Scatter(
-                x=ks, y=inertias, mode="lines+markers",
-                line=dict(color=T["primary"], width=2.5),
-                marker=dict(size=9, color=T["card_bg"], line=dict(color=T["primary"], width=2.5))
-            ))
-            fe.add_vline(x=k_clusters, line_dash="dash", line_color=T["accent"],
-                        annotation_text=f"K = {k_clusters}",
-                        annotation_font_color=T["accent"], annotation_font_size=12)
-            pl(fe, 340)
-            fe.update_layout(
-                xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
-                yaxis=dict(title=dict(text="Inertia — Within-Cluster Sum of Squares", font=dict(color=T["muted"]))),
-                font=dict(color=T["muted"])
+            # Info K default
+            st.markdown(f"""
+            <div class='info-box' style='border-left:3px solid {T["accent"]};'>
+                <b>Panduan Pemilihan K:</b> Default K=4 direkomendasikan berdasarkan kombinasi
+                domain knowledge (4 kuadran biaya hidup) dan validasi elbow method.
+                Geser slider di sidebar untuk mengeksplorasi konfigurasi lain.
+            </div>
+            """, unsafe_allow_html=True)
+        
+            ce, cs = st.columns(2)
+        
+            with ce:
+                    st.markdown("<div class='section-title'>Elbow Method</div>", unsafe_allow_html=True)
+                    st.markdown("""<div class='info-box'>WSS makin kecil = cluster makin padat.
+                    Pilih K di titik "siku" kurva.</div>""", unsafe_allow_html=True)
+        
+                    ks, inertias = compute_elbow(feature_scaled)
+                    fe = go.Figure()
+                    fe.add_trace(go.Scatter(
+                        x=ks, y=inertias, mode="lines+markers",
+                        line=dict(color=T["primary"], width=2.5),
+                        marker=dict(size=9, color=T["card_bg"], line=dict(color=T["primary"], width=2.5))
+                    ))
+                    fe.add_vline(x=k_clusters, line_dash="dash", line_color=T["accent"],
+                                annotation_text=f"K = {k_clusters}",
+                                annotation_font_color=T["accent"], annotation_font_size=12)
+                    pl(fe, 340)
+                    fe.update_layout(
+                        xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
+                        yaxis=dict(title=dict(text="Inertia — Within-Cluster Sum of Squares", font=dict(color=T["muted"]))),
+                        font=dict(color=T["muted"])
+                    )
+                    st.plotly_chart(fe, use_container_width=True, config={"displayModeBar": False})
+        
+            with cs:
+                st.markdown("<div class='section-title'>Silhouette Score</div>", unsafe_allow_html=True)
+                fs = go.Figure()
+                fs.add_trace(go.Bar(
+                    x=ks_s, y=sil_s,
+                    marker_color=[T["primary"] if k == k_clusters else T["border"] for k in ks_s],
+                    marker_line_width=0
+                ))
+                pl(fs, 340)
+                fs.update_layout(
+                    xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
+                    yaxis=dict(title=dict(text="Silhouette Score (0 - 1)", font=dict(color=T["muted"])))
+                )
+                st.plotly_chart(fs, use_container_width=True, config={"displayModeBar": False})
+        
+            st.markdown("<div class='section-title'>PCA Cluster Plot — Reduksi Dimensi 10D ke 2D</div>",
+                        unsafe_allow_html=True)
+        
+            km_model, cluster_labels = run_kmeans(k_clusters, feature_scaled)
+            pca        = PCA(n_components=2, random_state=42)
+            pca_coords = pca.fit_transform(feature_scaled)
+            var_exp    = pca.explained_variance_ratio_
+        
+            clustered_temp = country_data.copy()
+            clustered_temp["Cluster_ID"] = cluster_labels
+        
+            pca_df = pd.DataFrame({
+                "PC1"    : pca_coords[:, 0],
+                "PC2"    : pca_coords[:, 1],
+                "country": country_data["country"].values,
+                "Cluster": [get_cluster_label(c, clustered_temp) for c in cluster_labels],
+                "CLI"    : country_data["CLI"].values.round(0),
+                "Salary" : country_data["x54"].values.round(0)
+            })
+        
+            unique_clusters = pca_df["Cluster"].unique()
+            color_map = {
+                label: CLUSTER_COLORS[i % len(CLUSTER_COLORS)]
+                for i, label in enumerate(sorted(unique_clusters))
+            }
+        
+            fp = px.scatter(
+                pca_df, x="PC1", y="PC2", color="Cluster",
+                hover_name="country",
+                hover_data={"CLI":True,"Salary":True,"PC1":False,"PC2":False},
+                color_discrete_map=color_map,
             )
-            st.plotly_chart(fe, use_container_width=True, config={"displayModeBar": False})
-
-    with cs:
-        st.markdown("<div class='section-title'>Silhouette Score</div>", unsafe_allow_html=True)
-        fs = go.Figure()
-        fs.add_trace(go.Bar(
-            x=ks_s, y=sil_s,
-            marker_color=[T["primary"] if k == k_clusters else T["border"] for k in ks_s],
-            marker_line_width=0
-        ))
-        pl(fs, 340)
-        fs.update_layout(
-            xaxis=dict(title=dict(text="Jumlah Cluster (K)", font=dict(color=T["muted"]))),
-            yaxis=dict(title=dict(text="Silhouette Score (0 - 1)", font=dict(color=T["muted"])))
-        )
-        st.plotly_chart(fs, use_container_width=True, config={"displayModeBar": False})
-
-    st.markdown("<div class='section-title'>PCA Cluster Plot — Reduksi Dimensi 10D ke 2D</div>",
-                unsafe_allow_html=True)
-
-    km_model, cluster_labels = run_kmeans(k_clusters, feature_scaled)
-    pca        = PCA(n_components=2, random_state=42)
-    pca_coords = pca.fit_transform(feature_scaled)
-    var_exp    = pca.explained_variance_ratio_
-
-    clustered_temp = country_data.copy()
-    clustered_temp["Cluster_ID"] = cluster_labels
-
-    pca_df = pd.DataFrame({
-        "PC1"    : pca_coords[:, 0],
-        "PC2"    : pca_coords[:, 1],
-        "country": country_data["country"].values,
-        "Cluster": [get_cluster_label(c, clustered_temp) for c in cluster_labels],
-        "CLI"    : country_data["CLI"].values.round(0),
-        "Salary" : country_data["x54"].values.round(0)
-    })
-
-    unique_clusters = pca_df["Cluster"].unique()
-    color_map = {
-        label: CLUSTER_COLORS[i % len(CLUSTER_COLORS)]
-        for i, label in enumerate(sorted(unique_clusters))
-    }
-
-    fp = px.scatter(
-        pca_df, x="PC1", y="PC2", color="Cluster",
-        hover_name="country",
-        hover_data={"CLI":True,"Salary":True,"PC1":False,"PC2":False},
-        color_discrete_map=color_map,
-    )
-    fp.update_traces(marker=dict(size=10, opacity=0.82, line=dict(color=T["card_bg"], width=1)))
-    pl(fp, 500)
-    fp.update_layout(
-        xaxis=dict(title=dict(text=f"PC1 — {var_exp[0]*100:.1f}% Variance Explained", font=dict(color=T["muted"]))),
-        yaxis=dict(title=dict(text=f"PC2 — {var_exp[1]*100:.1f}% Variance Explained", font=dict(color=T["muted"]))),
-    )
-    st.plotly_chart(fp, use_container_width=True, config={"displayModeBar": False})
-
-    sil_now  = silhouette_score(feature_scaled, cluster_labels)
-    best_k   = ks_s[sil_s.index(max(sil_s))]
-    sil_best = max(sil_s)
-    sil_msg  = (
-        f"— cluster overlap. K={best_k} menghasilkan silhouette tertinggi ({sil_best:.3f}), "
-        "tapi K=4 lebih interpretatif secara domain."
-        if sil_now < 0.35
-        else "— pemisahan cluster baik ✓"
-    )
-    st.markdown(f"""
-    <div class='info-box' style='border-left:3px solid {T["accent"] if sil_now < 0.35 else T["primary"]};'>
-        <b>Kualitas Cluster K={k_clusters}:</b> Silhouette Score = <b>{sil_now:.3f}</b> {sil_msg}
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Cluster Profiling
-    st.markdown("<div class='section-title'>Cluster Profiling</div>", unsafe_allow_html=True)
-    clustered_df = country_data.copy()
-    clustered_df["Cluster_ID"] = cluster_labels
-    clustered_df["Cluster"] = [get_cluster_label(c, clustered_df) for c in cluster_labels]
-
-    profile = clustered_df.groupby("Cluster").agg(
-        N_Negara   = ("country","count"),
-        Avg_CLI    = ("CLI",    lambda x: round(x.mean(), 0)),
-        Avg_Salary = ("x54",   lambda x: round(x.mean(), 0)),
-        Avg_Score  = ("Recommendation_Score", lambda x: round(x.mean(), 2))
-    ).reset_index()
-    profile.columns = ["Cluster", "N Negara", "Avg CLI ($)", "Avg Salary ($)", "Avg Score"]
-    st.markdown(html_table(profile), unsafe_allow_html=True)
-
-    # Anggota per Cluster — FIX #1: Radio adaptive via CSS
-    st.markdown("<div class='section-title'>Anggota per Cluster</div>", unsafe_allow_html=True)
-    members = clustered_df[["country","Cluster","CLI","x54","Recommendation_Score"]].copy()
-    members.columns = ["Country","Cluster","CLI ($)","Salary ($)","Score"]
-    members = members.round(1).sort_values("Cluster").reset_index(drop=True)
-
-    cluster_options  = ["All"] + sorted(members["Cluster"].unique().tolist())
-    selected_cluster = st.radio(
-        "Filter Cluster:",
-        options=cluster_options,
-        horizontal=True,
-        key="cluster_filter"
-    )
-
-    filtered_members = (
-        members[members["Cluster"] == selected_cluster].reset_index(drop=True)
-        if selected_cluster != "All"
-        else members
-    )
-    st.markdown(html_table(filtered_members), unsafe_allow_html=True)
+            fp.update_traces(marker=dict(size=10, opacity=0.82, line=dict(color=T["card_bg"], width=1)))
+            pl(fp, 500)
+            fp.update_layout(
+                xaxis=dict(title=dict(text=f"PC1 — {var_exp[0]*100:.1f}% Variance Explained", font=dict(color=T["muted"]))),
+                yaxis=dict(title=dict(text=f"PC2 — {var_exp[1]*100:.1f}% Variance Explained", font=dict(color=T["muted"]))),
+            )
+            st.plotly_chart(fp, use_container_width=True, config={"displayModeBar": False})
+        
+            sil_now  = silhouette_score(feature_scaled, cluster_labels)
+            best_k   = ks_s[sil_s.index(max(sil_s))]
+            sil_best = max(sil_s)
+            sil_msg  = (
+                f"— cluster overlap. K={best_k} menghasilkan silhouette tertinggi ({sil_best:.3f}), "
+                "tapi K=4 lebih interpretatif secara domain."
+                if sil_now < 0.35
+                else "— pemisahan cluster baik ✓"
+            )
+            st.markdown(f"""
+            <div class='info-box' style='border-left:3px solid {T["accent"] if sil_now < 0.35 else T["primary"]};'>
+                <b>Kualitas Cluster K={k_clusters}:</b> Silhouette Score = <b>{sil_now:.3f}</b> {sil_msg}
+            </div>
+            """, unsafe_allow_html=True)
+        
+            # Cluster Profiling
+            st.markdown("<div class='section-title'>Cluster Profiling</div>", unsafe_allow_html=True)
+            clustered_df = country_data.copy()
+            clustered_df["Cluster_ID"] = cluster_labels
+            clustered_df["Cluster"] = [get_cluster_label(c, clustered_df) for c in cluster_labels]
+        
+            profile = clustered_df.groupby("Cluster").agg(
+                N_Negara   = ("country","count"),
+                Avg_CLI    = ("CLI",    lambda x: round(x.mean(), 0)),
+                Avg_Salary = ("x54",   lambda x: round(x.mean(), 0)),
+                Avg_Score  = ("Recommendation_Score", lambda x: round(x.mean(), 2))
+            ).reset_index()
+            profile.columns = ["Cluster", "N Negara", "Avg CLI ($)", "Avg Salary ($)", "Avg Score"]
+            st.markdown(html_table(profile), unsafe_allow_html=True)
+        
+            # Anggota per Cluster — FIX #1: Radio adaptive via CSS
+            st.markdown("<div class='section-title'>Anggota per Cluster</div>", unsafe_allow_html=True)
+            members = clustered_df[["country","Cluster","CLI","x54","Recommendation_Score"]].copy()
+            members.columns = ["Country","Cluster","CLI ($)","Salary ($)","Score"]
+            members = members.round(1).sort_values("Cluster").reset_index(drop=True)
+        
+            cluster_options  = ["All"] + sorted(members["Cluster"].unique().tolist())
+            selected_cluster = st.radio(
+                "Filter Cluster:",
+                options=cluster_options,
+                horizontal=True,
+                key="cluster_filter"
+            )
+        
+            filtered_members = (
+                members[members["Cluster"] == selected_cluster].reset_index(drop=True)
+                if selected_cluster != "All"
+                else members
+            )
+            st.markdown(html_table(filtered_members), unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════
