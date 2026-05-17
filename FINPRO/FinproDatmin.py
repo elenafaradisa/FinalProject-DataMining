@@ -948,226 +948,224 @@ with tab_prep:
         <span class='page-sub'>Preprocessing · Statistical Analysis · Clustering</span>
     </div>""", unsafe_allow_html=True)
 
-    with st.expander("🛠️ Preprocessing Pipeline", expanded=True):
-        st.markdown("<div class='section-title'>Preprocessing Pipeline</div>",
-                    unsafe_allow_html=True)
+    with st.expander("🛠️ Preprocessing Pipeline", expanded=True)
 
-    pp_stats    = pipeline_results["stats"]
-    df_raw_pp   = pipeline_results["df_raw"]
-    df_clean_pp = pipeline_results["df_clean"]
-
-    # KPI Cards
-    c1, c2, c3, c4 = st.columns(4)
-    prep_cards = [
-        ("Raw Rows",      f"{pp_stats['n_raw']:,}",         "Total data mentah",     "📂"),
-        ("After Cleaning",f"{pp_stats['n_after_clean']:,}", "Setelah cleaning",       "🧹"),
-        ("Negara Raw",    f"{pp_stats['n_country_raw']}",   "Sebelum preprocessing", "🌐"),
-        ("Negara Final",  f"{pp_stats['n_country_final']}", "Setelah preprocessing", "✅"),
-    ]
-    for col, (name, val, sub, icon) in zip([c1, c2, c3, c4], prep_cards):
-        with col:
-            st.markdown(f"""
-            <div class='metric-card'>
-                <div class='metric-top'>
-                    <span class='metric-name'>{name}</span>
-                    <span class='metric-icon'>{icon}</span>
-                </div>
-                <div class='metric-value'>{val}</div>
-                <div class='metric-trend'>&#8599; {sub}</div>
-            </div>""", unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Pipeline Flow Diagram
-    st.markdown("<div class='section-title'>Alur Pipeline</div>", unsafe_allow_html=True)
-    st.markdown(f"""
-    <div style='display:flex; align-items:stretch; gap:6px; margin-bottom:20px; flex-wrap:wrap;'>
-        <div class='pipeline-step'>
-            <div class='pipeline-step-title'>📂 Raw Data</div>
-            <div class='pipeline-step-desc'>{pp_stats['n_raw']:,} baris<br>CSV kota-level</div>
+        pp_stats    = pipeline_results["stats"]
+        df_raw_pp   = pipeline_results["df_raw"]
+        df_clean_pp = pipeline_results["df_clean"]
+    
+        # KPI Cards
+        c1, c2, c3, c4 = st.columns(4)
+        prep_cards = [
+            ("Raw Rows",      f"{pp_stats['n_raw']:,}",         "Total data mentah",     "📂"),
+            ("After Cleaning",f"{pp_stats['n_after_clean']:,}", "Setelah cleaning",       "🧹"),
+            ("Negara Raw",    f"{pp_stats['n_country_raw']}",   "Sebelum preprocessing", "🌐"),
+            ("Negara Final",  f"{pp_stats['n_country_final']}", "Setelah preprocessing", "✅"),
+        ]
+        for col, (name, val, sub, icon) in zip([c1, c2, c3, c4], prep_cards):
+            with col:
+                st.markdown(f"""
+                <div class='metric-card'>
+                    <div class='metric-top'>
+                        <span class='metric-name'>{name}</span>
+                        <span class='metric-icon'>{icon}</span>
+                    </div>
+                    <div class='metric-value'>{val}</div>
+                    <div class='metric-trend'>&#8599; {sub}</div>
+                </div>""", unsafe_allow_html=True)
+    
+        st.markdown("<br>", unsafe_allow_html=True)
+    
+        # Pipeline Flow Diagram
+        st.markdown("<div class='section-title'>Alur Pipeline</div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style='display:flex; align-items:stretch; gap:6px; margin-bottom:20px; flex-wrap:wrap;'>
+            <div class='pipeline-step'>
+                <div class='pipeline-step-title'>📂 Raw Data</div>
+                <div class='pipeline-step-desc'>{pp_stats['n_raw']:,} baris<br>CSV kota-level</div>
+            </div>
+            <div class='pipeline-arrow'>→</div>
+            <div class='pipeline-step' style='border-top:3px solid {T["primary"]};'>
+                <div class='pipeline-step-title'>🧹 Clean</div>
+                <div class='pipeline-step-desc'>Dedup · Impute<br>IQR Capping</div>
+            </div>
+            <div class='pipeline-arrow'>→</div>
+            <div class='pipeline-step' style='border-top:3px solid {T["accent"]};'>
+                <div class='pipeline-step-title'>🏙️ Aggregate</div>
+                <div class='pipeline-step-desc'>Kota → Negara<br>Mean per country</div>
+            </div>
+            <div class='pipeline-arrow'>→</div>
+            <div class='pipeline-step' style='border-top:3px solid {T["second"]};'>
+                <div class='pipeline-step-title'>⚙️ Engineer</div>
+                <div class='pipeline-step-desc'>CLI · Rec. Score<br>Feature derivation</div>
+            </div>
+            <div class='pipeline-arrow'>→</div>
+            <div class='pipeline-step' style='border-top:3px solid {T["primary"]};'>
+                <div class='pipeline-step-title'>📐 Scale</div>
+                <div class='pipeline-step-desc'>MinMax → Cosine<br>StdScaler → KMeans</div>
+            </div>
+            <div class='pipeline-arrow'>→</div>
+            <div class='pipeline-step' style='border-top:3px solid {T["accent"]};'>
+                <div class='pipeline-step-title'>🤖 Model</div>
+                <div class='pipeline-step-desc'>{pp_stats['n_country_final']} negara<br>Ready for analysis</div>
+            </div>
         </div>
-        <div class='pipeline-arrow'>→</div>
-        <div class='pipeline-step' style='border-top:3px solid {T["primary"]};'>
-            <div class='pipeline-step-title'>🧹 Clean</div>
-            <div class='pipeline-step-desc'>Dedup · Impute<br>IQR Capping</div>
-        </div>
-        <div class='pipeline-arrow'>→</div>
-        <div class='pipeline-step' style='border-top:3px solid {T["accent"]};'>
-            <div class='pipeline-step-title'>🏙️ Aggregate</div>
-            <div class='pipeline-step-desc'>Kota → Negara<br>Mean per country</div>
-        </div>
-        <div class='pipeline-arrow'>→</div>
-        <div class='pipeline-step' style='border-top:3px solid {T["second"]};'>
-            <div class='pipeline-step-title'>⚙️ Engineer</div>
-            <div class='pipeline-step-desc'>CLI · Rec. Score<br>Feature derivation</div>
-        </div>
-        <div class='pipeline-arrow'>→</div>
-        <div class='pipeline-step' style='border-top:3px solid {T["primary"]};'>
-            <div class='pipeline-step-title'>📐 Scale</div>
-            <div class='pipeline-step-desc'>MinMax → Cosine<br>StdScaler → KMeans</div>
-        </div>
-        <div class='pipeline-arrow'>→</div>
-        <div class='pipeline-step' style='border-top:3px solid {T["accent"]};'>
-            <div class='pipeline-step-title'>🤖 Model</div>
-            <div class='pipeline-step-desc'>{pp_stats['n_country_final']} negara<br>Ready for analysis</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Ringkasan Pipeline Stats
-    st.markdown("<div class='section-title'>Ringkasan Pipeline</div>", unsafe_allow_html=True)
-    n_cleaned = pp_stats['n_raw'] - pp_stats['n_after_clean']
-    pipeline_summary = pd.DataFrame({
-        "Tahap"      : ["Raw data", "Exact duplicates removed", "Logical duplicates (city+country)",
-                        "Rows setelah cleaning", "Negara raw", "Negara final"],
-        "Nilai"      : [f"{pp_stats['n_raw']:,}", f"{pp_stats['n_exact_dup']:,}",
-                        f"{n_cleaned - pp_stats['n_exact_dup']:,}",
-                        f"{pp_stats['n_after_clean']:,}",
-                        f"{pp_stats['n_country_raw']}", f"{pp_stats['n_country_final']}"],
-        "Keterangan" : ["Input", "Duplikat identik dihapus", "Kota sama per negara, simpan data_quality tertinggi",
-                        "Setelah semua cleaning steps", "Sebelum agregasi", "Setelah agregasi negara"],
-    })
-    st.markdown(html_table(pipeline_summary), unsafe_allow_html=True)
-
-    # FIX #4: Detail teknis tersembunyi dalam expander
-    with st.expander("🔬 Detail Teknis — untuk Data Scientist"):
-        st.markdown("<div class='section-title'>Missing Value Comparison</div>", unsafe_allow_html=True)
-        sample_cols = ["x1","x3","x8","x28","x33","x36","x48","x49","x54"]
-        null_raw    = df_raw_pp[sample_cols].isnull().sum()
-        null_clean  = df_clean_pp[sample_cols].isnull().sum()
-        null_df = pd.DataFrame({
-            "Kolom"    : sample_cols,
-            "NaN Raw"  : null_raw.values,
-            "NaN Clean": null_clean.values,
-            "Berkurang": (null_raw - null_clean).values
+        """, unsafe_allow_html=True)
+    
+        # Ringkasan Pipeline Stats
+        st.markdown("<div class='section-title'>Ringkasan Pipeline</div>", unsafe_allow_html=True)
+        n_cleaned = pp_stats['n_raw'] - pp_stats['n_after_clean']
+        pipeline_summary = pd.DataFrame({
+            "Tahap"      : ["Raw data", "Exact duplicates removed", "Logical duplicates (city+country)",
+                            "Rows setelah cleaning", "Negara raw", "Negara final"],
+            "Nilai"      : [f"{pp_stats['n_raw']:,}", f"{pp_stats['n_exact_dup']:,}",
+                            f"{n_cleaned - pp_stats['n_exact_dup']:,}",
+                            f"{pp_stats['n_after_clean']:,}",
+                            f"{pp_stats['n_country_raw']}", f"{pp_stats['n_country_final']}"],
+            "Keterangan" : ["Input", "Duplikat identik dihapus", "Kota sama per negara, simpan data_quality tertinggi",
+                            "Setelah semua cleaning steps", "Sebelum agregasi", "Setelah agregasi negara"],
         })
-        st.markdown(html_table(null_df), unsafe_allow_html=True)
-
-        st.markdown("<div class='section-title'>IQR Capping — x54 Salary</div>", unsafe_allow_html=True)
-        raw_x54   = pd.to_numeric(df_raw_pp["x54"], errors="coerce").dropna()
-        clean_x54 = df_clean_pp["x54"].dropna()
-        fig_iqr = go.Figure()
-        fig_iqr.add_trace(go.Box(y=raw_x54,   name="Raw",     marker_color=T["accent"], boxmean=True))
-        fig_iqr.add_trace(go.Box(y=clean_x54, name="Cleaned", marker_color=T["primary"], boxmean=True))
-        fig_iqr.update_layout(margin=dict(t=10, b=10),
-                               yaxis=dict(title=dict(text="Monthly Salary (USD)",
-                                                     font=dict(color=T["muted"]))))
-        pl(fig_iqr, 300)
-        st.plotly_chart(fig_iqr, use_container_width=True, config={"displayModeBar": False})
-
-        st.markdown("<div class='section-title'>CLI Component Weights</div>", unsafe_allow_html=True)
-        cli_weights = pd.DataFrame({
-            "Komponen": ["x1 — Meal","x48 — Rent","x36 — Utilities","x33 — Gasoline"],
-            "Bobot"   : ["35%","40%","15%","10%"]
-        })
-        st.markdown(html_table(cli_weights), unsafe_allow_html=True)
-
-        st.markdown("<div class='section-title'>Feature Selection — Variabel Model</div>",
-                    unsafe_allow_html=True)
-        feat_table = pd.DataFrame({
-            "Kode" : ["x3","x8","x28","x49","Recommendation_Score"],
-            "Fitur": ["McMeal","Water (1.5L)","Transport (Monthly)",
-                      "Apartment Outside Centre","Purchasing Power Index"],
-            "Scaler": ["MinMax→Cosine","MinMax→Cosine","MinMax→Cosine",
-                       "MinMax→Cosine","MinMax→Cosine"]
-        })
-        st.markdown(html_table(feat_table), unsafe_allow_html=True)
-
-        mi_tab, var_tab, dist_tab, norm_tab = st.tabs([
-            "MI Score", "Variance Analysis", "Feature Distribution", "Normalisasi"
-        ])
-
-        with mi_tab:
-            cosine_feat_set = {"x3","x8","x28","x49"}
-            mi_plot = mi_df.copy()
-            mi_plot["Warna"] = mi_plot["Feature"].apply(
-                lambda f: T["accent"]  if f in cosine_feat_set
-                else (T["primary"] if f in {"x1","x33","x36","x48","x54","CLI"} else T["border"])
-            )
-            mi_sorted = mi_plot.sort_values("MI_Score", ascending=True).tail(30)
-            fig_mi = go.Figure()
-            fig_mi.add_trace(go.Bar(
-                x=mi_sorted["MI_Score"], y=mi_sorted["Feature"], orientation="h",
-                marker_color=mi_sorted["Warna"], marker_line_width=0,
-                text=mi_sorted["MI_Score"].round(3), textposition="outside",
-                textfont=dict(size=9, color=T["text"]),
-                hovertemplate="<b>%{y}</b><br>MI Score: %{x:.4f}<extra></extra>"
-            ))
-            pl(fig_mi, 520)
-            fig_mi.update_layout(
-                xaxis=dict(title=dict(text="Mutual Information Score", font=dict(color=T["muted"]))),
-                yaxis=dict(title=dict(text="Feature",                  font=dict(color=T["muted"]))),
-                showlegend=False, margin=dict(t=10, b=30, l=10, r=60)
-            )
-            st.plotly_chart(fig_mi, use_container_width=True, config={"displayModeBar": False})
-
-        with var_tab:
-            _, col_var, _ = st.columns([1, 2, 1])
-            with col_var:
-                fig_var = px.scatter(
-                    mi_df, x="Variance", y="MI_Score", text="Feature",
-                    color="Lolos_VarThreshold",
-                    color_discrete_map={True: T["primary"], False: T["border"]},
-                    labels={"Variance":"Variance","MI_Score":"MI Score","Lolos_VarThreshold":"Lolos Threshold"}
+        st.markdown(html_table(pipeline_summary), unsafe_allow_html=True)
+    
+        # FIX #4: Detail teknis tersembunyi dalam expander
+        with st.expander("🔬 Detail Teknis — untuk Data Scientist"):
+            st.markdown("<div class='section-title'>Missing Value Comparison</div>", unsafe_allow_html=True)
+            sample_cols = ["x1","x3","x8","x28","x33","x36","x48","x49","x54"]
+            null_raw    = df_raw_pp[sample_cols].isnull().sum()
+            null_clean  = df_clean_pp[sample_cols].isnull().sum()
+            null_df = pd.DataFrame({
+                "Kolom"    : sample_cols,
+                "NaN Raw"  : null_raw.values,
+                "NaN Clean": null_clean.values,
+                "Berkurang": (null_raw - null_clean).values
+            })
+            st.markdown(html_table(null_df), unsafe_allow_html=True)
+    
+            st.markdown("<div class='section-title'>IQR Capping — x54 Salary</div>", unsafe_allow_html=True)
+            raw_x54   = pd.to_numeric(df_raw_pp["x54"], errors="coerce").dropna()
+            clean_x54 = df_clean_pp["x54"].dropna()
+            fig_iqr = go.Figure()
+            fig_iqr.add_trace(go.Box(y=raw_x54,   name="Raw",     marker_color=T["accent"], boxmean=True))
+            fig_iqr.add_trace(go.Box(y=clean_x54, name="Cleaned", marker_color=T["primary"], boxmean=True))
+            fig_iqr.update_layout(margin=dict(t=10, b=10),
+                                   yaxis=dict(title=dict(text="Monthly Salary (USD)",
+                                                         font=dict(color=T["muted"]))))
+            pl(fig_iqr, 300)
+            st.plotly_chart(fig_iqr, use_container_width=True, config={"displayModeBar": False})
+    
+            st.markdown("<div class='section-title'>CLI Component Weights</div>", unsafe_allow_html=True)
+            cli_weights = pd.DataFrame({
+                "Komponen": ["x1 — Meal","x48 — Rent","x36 — Utilities","x33 — Gasoline"],
+                "Bobot"   : ["35%","40%","15%","10%"]
+            })
+            st.markdown(html_table(cli_weights), unsafe_allow_html=True)
+    
+            st.markdown("<div class='section-title'>Feature Selection — Variabel Model</div>",
+                        unsafe_allow_html=True)
+            feat_table = pd.DataFrame({
+                "Kode" : ["x3","x8","x28","x49","Recommendation_Score"],
+                "Fitur": ["McMeal","Water (1.5L)","Transport (Monthly)",
+                          "Apartment Outside Centre","Purchasing Power Index"],
+                "Scaler": ["MinMax→Cosine","MinMax→Cosine","MinMax→Cosine",
+                           "MinMax→Cosine","MinMax→Cosine"]
+            })
+            st.markdown(html_table(feat_table), unsafe_allow_html=True)
+    
+            mi_tab, var_tab, dist_tab, norm_tab = st.tabs([
+                "MI Score", "Variance Analysis", "Feature Distribution", "Normalisasi"
+            ])
+    
+            with mi_tab:
+                cosine_feat_set = {"x3","x8","x28","x49"}
+                mi_plot = mi_df.copy()
+                mi_plot["Warna"] = mi_plot["Feature"].apply(
+                    lambda f: T["accent"]  if f in cosine_feat_set
+                    else (T["primary"] if f in {"x1","x33","x36","x48","x54","CLI"} else T["border"])
                 )
-                fig_var.update_traces(
-                    textposition="top center",
-                    textfont=dict(size=7, color=T["text"]),
-                    marker=dict(size=8, opacity=0.85, line=dict(color=T["card_bg"], width=1))
+                mi_sorted = mi_plot.sort_values("MI_Score", ascending=True).tail(30)
+                fig_mi = go.Figure()
+                fig_mi.add_trace(go.Bar(
+                    x=mi_sorted["MI_Score"], y=mi_sorted["Feature"], orientation="h",
+                    marker_color=mi_sorted["Warna"], marker_line_width=0,
+                    text=mi_sorted["MI_Score"].round(3), textposition="outside",
+                    textfont=dict(size=9, color=T["text"]),
+                    hovertemplate="<b>%{y}</b><br>MI Score: %{x:.4f}<extra></extra>"
+                ))
+                pl(fig_mi, 520)
+                fig_mi.update_layout(
+                    xaxis=dict(title=dict(text="Mutual Information Score", font=dict(color=T["muted"]))),
+                    yaxis=dict(title=dict(text="Feature",                  font=dict(color=T["muted"]))),
+                    showlegend=False, margin=dict(t=10, b=30, l=10, r=60)
                 )
-                fig_var.add_vline(x=1.0, line_dash="dash", line_color=T["accent"],
-                                  annotation_text="Threshold=1.0",
-                                  annotation_font_color=T["accent"], annotation_font_size=10)
-                pl(fig_var, 400)
-                fig_var.update_layout(
-                    showlegend=True,
-                    legend=dict(font=dict(size=10, color=T["text"]), title=""),
-                    margin=dict(t=10, b=10),
-                    xaxis=dict(title=dict(text="Variance", font=dict(color=T["muted"]))),
-                    yaxis=dict(title=dict(text="MI Score",  font=dict(color=T["muted"]))),
-                )
-                st.plotly_chart(fig_var, use_container_width=True, config={"displayModeBar": False})
-
-        with dist_tab:
-            _, col_dist, _ = st.columns([1, 2, 1])
-            with col_dist:
-                df_fs = pipeline_results["df_features_scaled"].copy()
-                feat_labels = {
-                    "x3":"McMeal","x8":"Water","x28":"Transport",
-                    "x49":"Apartment","Recommendation_Score":"Rec.Score"
-                }
-                df_fs_plot = df_fs.rename(columns=feat_labels).melt(var_name="Feature", value_name="Scaled Value")
-                fig_feat = px.box(df_fs_plot, x="Feature", y="Scaled Value",
-                                  color="Feature", color_discrete_sequence=BOX_COLORS)
-                pl(fig_feat, 380)
-                fig_feat.update_layout(
-                    showlegend=False, margin=dict(t=10, b=10),
-                    xaxis=dict(title=dict(text="Feature",            font=dict(color=T["muted"]))),
-                    yaxis=dict(title=dict(text="Scaled Value [0–1]", font=dict(color=T["muted"]))),
-                )
-                st.plotly_chart(fig_feat, use_container_width=True, config={"displayModeBar": False})
-
-        with norm_tab:
-            fd   = ["x1","x28","x36","x48","x54"]
-            fl   = ["Meal","Rent","Utilities","Gasoline","Salary"]
-            rmlt = country_data[fd].copy()
-            rmlt.columns = fl
-            rmlt = rmlt.melt(var_name="Feature", value_name="Value")
-            sarr = StandardScaler().fit_transform(country_data[fd])
-            smlt = pd.DataFrame(sarr, columns=fl).melt(var_name="Feature", value_name="Value")
-            nb, na = st.columns(2)
-            with nb:
-                st.markdown("<div class='section-title'>Raw</div>", unsafe_allow_html=True)
-                fb = px.box(rmlt, x="Feature", y="Value", color="Feature",
-                            color_discrete_sequence=BOX_COLORS)
-                pl(fb, 300); fb.update_layout(showlegend=False, margin=dict(t=10, b=10))
-                st.plotly_chart(fb, use_container_width=True, config={"displayModeBar": False})
-            with na:
-                st.markdown("<div class='section-title'>Z-Score</div>", unsafe_allow_html=True)
-                fa = px.box(smlt, x="Feature", y="Value", color="Feature",
-                            color_discrete_sequence=BOX_COLORS)
-                pl(fa, 300); fa.update_layout(showlegend=False, margin=dict(t=10, b=10))
-                st.plotly_chart(fa, use_container_width=True, config={"displayModeBar": False})
+                st.plotly_chart(fig_mi, use_container_width=True, config={"displayModeBar": False})
+    
+            with var_tab:
+                _, col_var, _ = st.columns([1, 2, 1])
+                with col_var:
+                    fig_var = px.scatter(
+                        mi_df, x="Variance", y="MI_Score", text="Feature",
+                        color="Lolos_VarThreshold",
+                        color_discrete_map={True: T["primary"], False: T["border"]},
+                        labels={"Variance":"Variance","MI_Score":"MI Score","Lolos_VarThreshold":"Lolos Threshold"}
+                    )
+                    fig_var.update_traces(
+                        textposition="top center",
+                        textfont=dict(size=7, color=T["text"]),
+                        marker=dict(size=8, opacity=0.85, line=dict(color=T["card_bg"], width=1))
+                    )
+                    fig_var.add_vline(x=1.0, line_dash="dash", line_color=T["accent"],
+                                      annotation_text="Threshold=1.0",
+                                      annotation_font_color=T["accent"], annotation_font_size=10)
+                    pl(fig_var, 400)
+                    fig_var.update_layout(
+                        showlegend=True,
+                        legend=dict(font=dict(size=10, color=T["text"]), title=""),
+                        margin=dict(t=10, b=10),
+                        xaxis=dict(title=dict(text="Variance", font=dict(color=T["muted"]))),
+                        yaxis=dict(title=dict(text="MI Score",  font=dict(color=T["muted"]))),
+                    )
+                    st.plotly_chart(fig_var, use_container_width=True, config={"displayModeBar": False})
+    
+            with dist_tab:
+                _, col_dist, _ = st.columns([1, 2, 1])
+                with col_dist:
+                    df_fs = pipeline_results["df_features_scaled"].copy()
+                    feat_labels = {
+                        "x3":"McMeal","x8":"Water","x28":"Transport",
+                        "x49":"Apartment","Recommendation_Score":"Rec.Score"
+                    }
+                    df_fs_plot = df_fs.rename(columns=feat_labels).melt(var_name="Feature", value_name="Scaled Value")
+                    fig_feat = px.box(df_fs_plot, x="Feature", y="Scaled Value",
+                                      color="Feature", color_discrete_sequence=BOX_COLORS)
+                    pl(fig_feat, 380)
+                    fig_feat.update_layout(
+                        showlegend=False, margin=dict(t=10, b=10),
+                        xaxis=dict(title=dict(text="Feature",            font=dict(color=T["muted"]))),
+                        yaxis=dict(title=dict(text="Scaled Value [0–1]", font=dict(color=T["muted"]))),
+                    )
+                    st.plotly_chart(fig_feat, use_container_width=True, config={"displayModeBar": False})
+    
+            with norm_tab:
+                fd   = ["x1","x28","x36","x48","x54"]
+                fl   = ["Meal","Rent","Utilities","Gasoline","Salary"]
+                rmlt = country_data[fd].copy()
+                rmlt.columns = fl
+                rmlt = rmlt.melt(var_name="Feature", value_name="Value")
+                sarr = StandardScaler().fit_transform(country_data[fd])
+                smlt = pd.DataFrame(sarr, columns=fl).melt(var_name="Feature", value_name="Value")
+                nb, na = st.columns(2)
+                with nb:
+                    st.markdown("<div class='section-title'>Raw</div>", unsafe_allow_html=True)
+                    fb = px.box(rmlt, x="Feature", y="Value", color="Feature",
+                                color_discrete_sequence=BOX_COLORS)
+                    pl(fb, 300); fb.update_layout(showlegend=False, margin=dict(t=10, b=10))
+                    st.plotly_chart(fb, use_container_width=True, config={"displayModeBar": False})
+                with na:
+                    st.markdown("<div class='section-title'>Z-Score</div>", unsafe_allow_html=True)
+                    fa = px.box(smlt, x="Feature", y="Value", color="Feature",
+                                color_discrete_sequence=BOX_COLORS)
+                    pl(fa, 300); fa.update_layout(showlegend=False, margin=dict(t=10, b=10))
+                    st.plotly_chart(fa, use_container_width=True, config={"displayModeBar": False})
 
 # ANALYSIS
     with st.expander("🔍 Statistical Analysis", expanded=False):
