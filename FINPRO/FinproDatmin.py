@@ -1536,20 +1536,6 @@ with tab4:
                 ]
             })
             st.markdown(html_table(ref_data), unsafe_allow_html=True)
-    
-            
-            # Tabel ringkas negara referensi
-            ref_row = country_data[country_data["country"] == user_country]
-            if not ref_row.empty:
-                ref_data = pd.DataFrame({
-                    "Metrik": ["CLI ($)", "Avg Salary ($)", "Rec. Score"],
-                    "Nilai": [
-                        f"${ref_row['CLI'].values[0]:,.0f}",
-                        f"${ref_row['x54'].values[0]:,.0f}",
-                        f"{ref_row['Recommendation_Score'].values[0]:.2f}"
-                    ]
-                })
-                st.markdown(html_table(ref_data), unsafe_allow_html=True)
 
     with crec:
         st.markdown("<div class='section-title'>Top Rekomendasi Negara</div>",
