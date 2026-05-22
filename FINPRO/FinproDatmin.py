@@ -1457,80 +1457,70 @@ with tab_prep:
 # FIX #8: Selaraskan radar chart dengan fitur model + label eksplisit
 # FIX #12: Info-box dengan bahasa manusiawi
 # ═══════════════════════════════════════════
-with tab4:
-    st.markdown("""
-    <div class='page-header'>
-        <span class='page-title'>🌍 Country Recommender</span>
-        <span class='page-sub'>Content-Based Cosine Similarity + Rule-Based Filter</span>
-    </div>""", unsafe_allow_html=True)
-
-    # FIX #12: Bahasa manusiawi, bukan jargon teknis
+with cr:
     st.markdown(f"""
-    <div class='info-box'>
-        <b>Cara kerja sistem ini:</b> Berdasarkan negara referensi yang kamu pilih,
-        sistem mencari negara lain dengan <i>pola biaya hidup paling mirip</i>,
-        lalu menyaringnya berdasarkan budget maksimal dan target gaji minimum
-        yang kamu atur di sidebar. Makin tinggi Similarity (%), makin mirip profilnya.
+    <div class='section-title'>Profil Negara Referensi</div>
+    <div style='font-size:11px;color:{T["muted"]};margin-bottom:10px;'>
+        Skala 0–1 = posisi relatif terhadap semua negara (MinMax global)
     </div>
     """, unsafe_allow_html=True)
 
-    cr, crec = st.columns([1, 2])
+    radar_vars = ["x3", "x8", "x28", "x49", "Recommendation_Score"]
+    radar_lbls = ["McMeal", "Water", "Transport", "Apt-Outside", "Rec.Score"]
 
-    with cr:
-        info_html = f"<div class='info-box' style='border-left:3px solid {T['accent']};'>"
-        info_html += f"<b>Panduan Pemilihan K:</b> Default K=4 direkomendasikan berdasarkan kombinasi domain knowledge (4 kuadran biaya hidup) dan validasi elbow method. Geser slider di sidebar untuk mengeksplorasi konfigurasi lain.</div>"
-        st.markdown(info_html, unsafe_allow_html=True)
+    # Ambil nilai mentah dari country_data lalu normalisasi GLOBAL
+    ref_row = country_data[country_data["country"] == user_country]
+    if not ref_row.empty:
+        raw_vals = ref_row[radar_vars].values.flatten().astype(float)
+        all_vals = country_data[radar_vars].fillna(0).values
+        min_v = np.nanmin(all_vals, axis=0)
+        max_v = np.nanmax(all_vals, axis=0)
+        vals_n = (raw_vals - min_v) / (max_v - min_v + 1e-9)
+        vals_n = np.clip(vals_n, 0, 1)
+    else:
+        vals_n = np.zeros(len(radar_vars))
 
-        # FIX: gunakan df_features_scaled (normalisasi global),
-        # bukan normalisasi ulang per baris
-        radar_vars  = ["x3", "x8", "x28", "x49", "Recommendation_Score"]
-        radar_lbls  = ["McMeal", "Water", "Transport", "Apt-Outside", "Rec.Score"]
-
-        df_scaled = pipeline_results["df_features_scaled"]  # index = country name
-
-        if user_country in df_scaled.index:
-            vals_n = df_scaled.loc[user_country, radar_vars].values.astype(float)
-        else:
-            # fallback: normalisasi manual jika negara tidak ada di scaled index
-            ref_row = country_data[country_data["country"] == user_country]
-            if not ref_row.empty:
-                raw_vals = ref_row[radar_vars].values.flatten().astype(float)
-                all_vals = country_data[radar_vars].values
-                min_v = np.nanmin(all_vals, axis=0)
-                max_v = np.nanmax(all_vals, axis=0)
-                vals_n = (raw_vals - min_v) / (max_v - min_v + 1e-9)
-            else:
-                vals_n = np.zeros(len(radar_vars))
-
-        fig_r = go.Figure()
-        fig_r.add_trace(go.Scatterpolar(
-            r=np.append(vals_n, vals_n[0]),
-            theta=radar_lbls + [radar_lbls[0]],
-            fill="toself",
-            name=user_country,
-            fillcolor="rgba(111,129,110,0.18)" if not dark_mode else "rgba(124,145,121,0.22)",
-            line=dict(color=T["primary"], width=2.5)
-        ))
-        fig_r.update_layout(
-            polar=dict(
-                radialaxis=dict(
-                    visible=True, range=[0, 1],
-                    gridcolor=T["border"],
-                    tickfont=dict(color=T["text"], size=10),
-                    tickvals=[0, 0.25, 0.5, 0.75, 1.0],
-                    ticktext=["0", "25%", "50%", "75%", "100%"],
-                ),
-                angularaxis=dict(tickfont=dict(color=T["text"], size=11)),
-                bgcolor=T["chart_pl"]
+    fig_r = go.Figure()
+    fig_r.add_trace(go.Scatterpolar(
+        r=np.append(vals_n, vals_n[0]),
+        theta=radar_lbls + [radar_lbls[0]],
+        fill="toself",
+        name=user_country,
+        fillcolor="rgba(111,129,110,0.18)" if not dark_mode else "rgba(124,145,121,0.22)",
+        line=dict(color=T["primary"], width=2.5)
+    ))
+    fig_r.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True, range=[0, 1],
+                gridcolor=T["border"],
+                tickfont=dict(color=T["text"], size=10),
+                tickvals=[0, 0.25, 0.5, 0.75, 1.0],
+                ticktext=["0", "25%", "50%", "75%", "100%"],
             ),
-            height=300,
-            paper_bgcolor=T["card_bg"],
-            showlegend=False,
-            font=dict(color=T["text"], family="Sora, sans-serif"),
-            margin=dict(t=20, b=20, l=20, r=20)
-        )
-        st.plotly_chart(fig_r, use_container_width=True, config={"displayModeBar": False})
+            angularaxis=dict(tickfont=dict(color=T["text"], size=11)),
+            bgcolor=T["chart_pl"]
+        ),
+        height=300,
+        paper_bgcolor=T["card_bg"],
+        showlegend=False,
+        font=dict(color=T["text"], family="Sora, sans-serif"),
+        margin=dict(t=20, b=20, l=20, r=20)
+    )
+    st.plotly_chart(fig_r, use_container_width=True, config={"displayModeBar": False})
 
+    if not ref_row.empty:
+        ref_data = pd.DataFrame({
+            "Metrik": ["CLI ($)", "Avg Salary ($)", "Rec. Score"],
+            "Nilai": [
+                f"${ref_row['CLI'].values[0]:,.0f}",
+                f"${ref_row['x54'].values[0]:,.0f}",
+                f"{ref_row['Recommendation_Score'].values[0]:.2f}"
+            ]
+        })
+        st.markdown(html_table(ref_data), unsafe_allow_html=True)
+
+        
         # Tabel ringkas negara referensi
         ref_row = country_data[country_data["country"] == user_country]
         if not ref_row.empty:
