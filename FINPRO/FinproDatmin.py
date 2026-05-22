@@ -1477,51 +1477,76 @@ with tab4:
     cr, crec = st.columns([1, 2])
 
     with cr:
-        # FIX #8: Radar menggunakan fitur yang sama dengan model cosine similarity
-        st.markdown(f"""
+        st.markdown(f\"\"\"
         <div class='section-title'>Profil Negara Referensi</div>
         <div style='font-size:11px;color:{T["muted"]};margin-bottom:10px;'>
-            Dimensi radar = fitur yang digunakan model similarity (bukan profil umum)
+            Skala 0–1 = posisi relatif terhadap semua negara (MinMax global)
         </div>
-        """, unsafe_allow_html=True)
+        \"\"\", unsafe_allow_html=True)
 
+        # FIX: gunakan df_features_scaled (normalisasi global),
+        # bukan normalisasi ulang per baris
+        radar_vars  = ["x3", "x8", "x28", "x49", "Recommendation_Score"]
+        radar_lbls  = ["McMeal", "Water", "Transport", "Apt-Outside", "Rec.Score"]
+
+        df_scaled = pipeline_results["df_features_scaled"]  # index = country name
+
+        if user_country in df_scaled.index:
+            vals_n = df_scaled.loc[user_country, radar_vars].values.astype(float)
+        else:
+            # fallback: normalisasi manual jika negara tidak ada di scaled index
+            ref_row = country_data[country_data["country"] == user_country]
+            if not ref_row.empty:
+                raw_vals = ref_row[radar_vars].values.flatten().astype(float)
+                all_vals = country_data[radar_vars].values
+                min_v = np.nanmin(all_vals, axis=0)
+                max_v = np.nanmax(all_vals, axis=0)
+                vals_n = (raw_vals - min_v) / (max_v - min_v + 1e-9)
+            else:
+                vals_n = np.zeros(len(radar_vars))
+
+        fig_r = go.Figure()
+        fig_r.add_trace(go.Scatterpolar(
+            r=np.append(vals_n, vals_n[0]),
+            theta=radar_lbls + [radar_lbls[0]],
+            fill="toself",
+            name=user_country,
+            fillcolor="rgba(111,129,110,0.18)" if not dark_mode else "rgba(124,145,121,0.22)",
+            line=dict(color=T["primary"], width=2.5)
+        ))
+        fig_r.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True, range=[0, 1],
+                    gridcolor=T["border"],
+                    tickfont=dict(color=T["text"], size=10),
+                    tickvals=[0, 0.25, 0.5, 0.75, 1.0],
+                    ticktext=["0", "25%", "50%", "75%", "100%"],
+                ),
+                angularaxis=dict(tickfont=dict(color=T["text"], size=11)),
+                bgcolor=T["chart_pl"]
+            ),
+            height=300,
+            paper_bgcolor=T["card_bg"],
+            showlegend=False,
+            font=dict(color=T["text"], family="Sora, sans-serif"),
+            margin=dict(t=20, b=20, l=20, r=20)
+        )
+        st.plotly_chart(fig_r, use_container_width=True, config={"displayModeBar": False})
+
+        # Tabel ringkas negara referensi
         ref_row = country_data[country_data["country"] == user_country]
         if not ref_row.empty:
-            # Selaras dengan fitur model: x3, x8, x28, x49, Recommendation_Score
-            radar_vars  = ["x3", "x8", "x28", "x49", "Recommendation_Score"]
-            radar_lbls  = ["McMeal", "Water", "Transport", "Apt-Outside", "Rec.Score"]
-            vals        = ref_row[radar_vars].values.flatten().astype(float)
-            vals_n      = (vals - vals.min()) / (vals.max() - vals.min() + 1e-9)
-
-            fig_r = go.Figure()
-            fig_r.add_trace(go.Scatterpolar(
-                r=np.append(vals_n, vals_n[0]),
-                theta=radar_lbls + [radar_lbls[0]],
-                fill="toself", name=user_country,
-                fillcolor="rgba(111,129,110,0.18)" if not dark_mode else "rgba(124,145,121,0.22)",
-                line=dict(color=T["primary"], width=2.5)
-            ))
-            fig_r.update_layout(
-                polar=dict(
-                    radialaxis=dict(visible=True, range=[0,1],
-                                    gridcolor=T["border"],
-                                    tickfont=dict(color=T["text"], size=10)),
-                    angularaxis=dict(tickfont=dict(color=T["text"], size=11)),
-                    bgcolor=T["chart_pl"]
-                ),
-                height=300, paper_bgcolor=T["card_bg"], showlegend=False,
-                font=dict(color=T["text"], family="Sora, sans-serif"),
-                margin=dict(t=20, b=20, l=20, r=20)
-            )
-            st.plotly_chart(fig_r, use_container_width=True, config={"displayModeBar": False})
-
             ref_data = pd.DataFrame({
                 "Metrik": ["CLI ($)", "Avg Salary ($)", "Rec. Score"],
-                "Nilai" : [f"${ref_row['CLI'].values[0]:,.0f}",
-                           f"${ref_row['x54'].values[0]:,.0f}",
-                           f"{ref_row['Recommendation_Score'].values[0]:.2f}"]
+                "Nilai": [
+                    f"${ref_row['CLI'].values[0]:,.0f}",
+                    f"${ref_row['x54'].values[0]:,.0f}",
+                    f"{ref_row['Recommendation_Score'].values[0]:.2f}"
+                ]
             })
             st.markdown(html_table(ref_data), unsafe_allow_html=True)
+
 
     with crec:
         st.markdown("<div class='section-title'>Top Rekomendasi Negara</div>",
