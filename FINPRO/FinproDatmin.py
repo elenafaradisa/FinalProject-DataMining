@@ -1477,12 +1477,9 @@ with tab4:
     cr, crec = st.columns([1, 2])
 
     with cr:
-        st.markdown(f\"\"\"
-        <div class='section-title'>Profil Negara Referensi</div>
-        <div style='font-size:11px;color:{T["muted"]};margin-bottom:10px;'>
-            Skala 0–1 = posisi relatif terhadap semua negara (MinMax global)
-        </div>
-        \"\"\", unsafe_allow_html=True)
+        info_html = f"<div class='info-box' style='border-left:3px solid {T['accent']};'>"
+        info_html += f"<b>Panduan Pemilihan K:</b> Default K=4 direkomendasikan berdasarkan kombinasi domain knowledge (4 kuadran biaya hidup) dan validasi elbow method. Geser slider di sidebar untuk mengeksplorasi konfigurasi lain.</div>"
+        st.markdown(info_html, unsafe_allow_html=True)
 
         # FIX: gunakan df_features_scaled (normalisasi global),
         # bukan normalisasi ulang per baris
